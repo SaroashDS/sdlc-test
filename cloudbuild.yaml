@@ -1,0 +1,88 @@
+# Google Cloud Build configuration for AI-SDLC Automation System
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/ai-sdlc-automation:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/ai-sdlc-automation:latest',
+      '.'
+    ]
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/ai-sdlc-automation:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/ai-sdlc-automation:latest']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run', 'deploy', 'ai-sdlc-automation',
+      '--image', 'gcr.io/$PROJECT_ID/ai-sdlc-automation:$COMMIT_SHA',
+      '--region', 'us-central1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--memory', '2Gi',
+      '--cpu', '2',
+      '--max-instances', '10',
+      '--set-env-vars', 'GCP_PROJECT_ID=$PROJECT_ID',
+      '--set-env-vars', 'ENVIRONMENT=production'
+    ]
+
+  # Deploy Cloud Functions
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'functions', 'deploy', 'ado-webhook-handler',
+      '--source', './cloud_functions/ado_webhook_handler',
+      '--entry-point', 'handle_ado_webhook',
+      '--runtime', 'python311',
+      '--trigger-http',
+      '--allow-unauthenticated',
+      '--region', 'us-central1',
+      '--memory', '512MB',
+      '--timeout', '300s'
+    ]
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'functions', 'deploy', 'github-webhook-handler',
+      '--source', './cloud_functions/github_webhook_handler',
+      '--entry-point', 'handle_github_webhook',
+      '--runtime', 'python311',
+      '--trigger-http',
+      '--allow-unauthenticated',
+      '--region', 'us-central1',
+      '--memory', '512MB',
+      '--timeout', '300s'
+    ]
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'functions', 'deploy', 'security-monitor',
+      '--source', './cloud_functions/security_monitor',
+      '--entry-point', 'monitor_security',
+      '--runtime', 'python311',
+      '--trigger-topic', 'security-alerts',
+      '--region', 'us-central1',
+      '--memory', '1GB',
+      '--timeout', '540s'
+    ]
+
+# Store images in Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/ai-sdlc-automation:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/ai-sdlc-automation:latest'
+
+# Build options
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+
+# Timeout for the entire build
+timeout: '1200s'

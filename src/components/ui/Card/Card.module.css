@@ -1,0 +1,43 @@
+/**
+ * Card.module.css
+ *
+ * Description: Styles for the Card component.
+ * This module provides a flexible and reusable card container style.
+ */
+
+.card {
+  /*
+   * Use CSS custom properties (variables) for easy theming and consistency.
+   * These can be overridden in a global stylesheet if needed.
+   */
+  --card-padding: 1.5rem;
+  --card-background-color: #ffffff;
+  --card-border-color: #e2e8f0; /* Equivalent to Tailwind's gray-200 */
+  --card-border-radius: 0.75rem;
+  --card-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --card-hover-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  /* Layout and Sizing */
+  padding: var(--card-padding);
+
+  /* Appearance */
+  background-color: var(--card-background-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-box-shadow);
+
+  /* Transitions for smooth hover effects */
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Optional: Add a subtle hover effect for better user feedback */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-hover-box-shadow);
+}
+
+/* Dark mode support using a data attribute or class on a parent element */
+[data-theme='dark'] .card {
+  --card-background-color: #1a202c; /* Equivalent to Tailwind's gray-800 */
+  --card-border-color: #4a5568; /* Equivalent to Tailwind's gray-600 */
+}

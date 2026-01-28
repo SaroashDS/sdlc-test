@@ -1,0 +1,142 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import styles from './MainLayout.module.css';
+
+// Add the jest-axe matcher
+expect.extend(toHaveNoViolations);
+
+/**
+ * A test component that implements the structure defined in MainLayout.module.css.
+ * This allows us to test the application of the CSS module classes in a realistic context.
+ */
+const MockLayoutComponent = ({
+  headerContent = 'Header',
+  sidebarContent = 'Sidebar',
+  mainContent = 'Main Content',
+  footerContent = 'Footer',
+}) => {
+  return (
+    <div className={styles.mainLayout} data-testid="main-layout">
+      <header className={styles.header} role="banner">
+        {headerContent}
+      </header>
+      <aside className={styles.sidebar} role="complementary">
+        {sidebarContent}
+      </aside>
+      <main className={styles.main} role="main">
+        {mainContent}
+      </main>
+      <footer className={styles.footer} role="contentinfo">
+        {footerContent}
+      </footer>
+    </div>
+  );
+};
+
+describe('MainLayout.module.css', () => {
+  // Since this is a CSS module, we test its integration with a component.
+  // The primary goal is to ensure that all defined class names are exported
+  // and can be correctly applied to a component's structure.
+
+  describe('Component Rendering and Structure', () => {
+    beforeEach(() => {
+      render(<MockLayoutComponent />);
+    });
+
+    it('should render the main layout container', () => {
+      const layoutContainer = screen.getByTestId('main-layout');
+      expect(layoutContainer).toBeInTheDocument();
+    });
+
+    it('should render the header section with its content', () => {
+      const header = screen.getByRole('banner');
+      expect(header).toBeInTheDocument();
+      expect(header).toHaveTextContent('Header');
+    });
+
+    it('should render the sidebar section with its content', () => {
+      const sidebar = screen.getByRole('complementary');
+      expect(sidebar).toBeInTheDocument();
+      expect(sidebar).toHaveTextContent('Sidebar');
+    });
+
+    it('should render the main content section', () => {
+      const main = screen.getByRole('main');
+      expect(main).toBeInTheDocument();
+      expect(main).toHaveTextContent('Main Content');
+    });
+
+    it('should render the footer section with its content', () => {
+      const footer = screen.getByRole('contentinfo');
+      expect(footer).toBeInTheDocument();
+      expect(footer).toHaveTextContent('Footer');
+    });
+  });
+
+  describe('CSS Module Class Application', () => {
+    it('should apply the correct class names to each layout section', () => {
+      const { container } = render(<MockLayoutComponent />);
+
+      // Note: In a Jest environment configured with identity-obj-proxy for CSS modules,
+      // the class name will be the same as the key in the styles object.
+      expect(screen.getByTestId('main-layout')).toHaveClass(styles.mainLayout);
+      expect(screen.getByRole('banner')).toHaveClass(styles.header);
+      expect(screen.getByRole('complementary')).toHaveClass(styles.sidebar);
+      expect(screen.getByRole('main')).toHaveClass(styles.main);
+      expect(screen.getByRole('contentinfo')).toHaveClass(styles.footer);
+
+      // Verify that the class names are not undefined or empty
+      expect(styles.mainLayout).toBe('mainLayout');
+      expect(styles.header).toBe('header');
+      expect(styles.sidebar).toBe('sidebar');
+      expect(styles.main).toBe('main');
+      expect(styles.footer).toBe('footer');
+    });
+  });
+
+  describe('Content Projection', () => {
+    it('should render different custom content in each section', () => {
+      render(
+        <MockLayoutComponent
+          headerContent={<h1>Custom Header</h1>}
+          sidebarContent={<ul><li>Nav Item</li></ul>}
+          mainContent={<p>This is the main article.</p>}
+          footerContent={<span>© 2024</span>}
+        />
+      );
+
+      expect(screen.getByRole('heading', { name: /custom header/i })).toBeInTheDocument();
+      expect(screen.getByRole('listitem')).toHaveTextContent('Nav Item');
+      expect(screen.getByText('This is the main article.')).toBeInTheDocument();
+      expect(screen.getByText('© 2024')).toBeInTheDocument();
+    });
+  });
+
+  describe('Snapshot Testing', () => {
+    it('should match the snapshot with default content', () => {
+      const { container } = render(<MockLayoutComponent />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('should match the snapshot with custom React element content', () => {
+      const { container } = render(
+        <MockLayoutComponent
+          headerContent={<div>Custom Header</div>}
+          sidebarContent={<span>Custom Sidebar</span>}
+          mainContent={<section>Custom Main</section>}
+          footerContent={<div>Custom Footer</div>}
+        />
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('Accessibility Testing', () => {
+    it('should have no accessibility violations', async () => {
+      const { container } = render(<MockLayoutComponent />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+  });
+});

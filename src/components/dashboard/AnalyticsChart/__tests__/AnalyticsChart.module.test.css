@@ -1,0 +1,64 @@
+import styles from './AnalyticsChart.module.css';
+
+/**
+ * @jest-environment jsdom
+ */
+
+describe('AnalyticsChart.module.css', () => {
+  // This test assumes Jest is configured to handle CSS modules,
+  // for example, using 'identity-obj-proxy'.
+  // This proxy transforms imported styles into an object where keys
+  // are the class names and values are the class names themselves as strings.
+
+  it('should export an object of class names', () => {
+    expect(styles).toBeInstanceOf(Object);
+  });
+
+  it('should contain all the defined class names', () => {
+    const expectedClasses = [
+      'chartContainer',
+      'chartWrapper',
+      'legend',
+      'legendItem',
+      'legendColorSwatch',
+      'legendLabel',
+    ];
+
+    expectedClasses.forEach(className => {
+      expect(styles).toHaveProperty(className);
+      expect(typeof styles[className]).toBe('string');
+    });
+  });
+
+  it('should not contain any undefined or null class names', () => {
+    Object.keys(styles).forEach(className => {
+      expect(styles[className]).toBeDefined();
+      expect(styles[className]).not.toBeNull();
+      expect(styles[className]).not.toBe('');
+    });
+  });
+
+  it('should match the snapshot of exported class names', () => {
+    // This snapshot test ensures that class names are not accidentally
+    // removed, added, or renamed. It acts as a contract for the module's exports.
+    expect(styles).toMatchSnapshot();
+  });
+
+  describe('Individual Class Name Properties', () => {
+    const classMap = {
+      chartContainer: 'chartContainer',
+      chartWrapper: 'chartWrapper',
+      legend: 'legend',
+      legendItem: 'legendItem',
+      legendColorSwatch: 'legendColorSwatch',
+      legendLabel: 'legendLabel',
+    };
+
+    Object.entries(classMap).forEach(([key, value]) => {
+      it(`should correctly map the '${key}' class`, () => {
+        // With identity-obj-proxy, the key and value should be identical.
+        expect(styles[key]).toBe(value);
+      });
+    });
+  });
+});

@@ -1,0 +1,133 @@
+/*
+ * src/components/dashboard/KpiCard/KpiCard.module.css
+ * Styles for the KPI (Key Performance Indicator) card component.
+ */
+
+/*
+ * Main container for the KPI card.
+ * Uses flexbox to structure the content vertically and provide spacing.
+ * Includes styling for background, border, shadow, and rounded corners.
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem; /* 24px */
+  background-color: var(--card-background, #ffffff);
+  border: 1px solid var(--card-border-color, #e2e8f0);
+  border-radius: 0.75rem; /* 12px */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  min-width: 220px;
+}
+
+/*
+ * Adds a subtle lift effect on hover to provide user feedback.
+ */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/*
+ * Header section containing the title and the main icon.
+ * Uses flexbox to align items horizontally.
+ */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem; /* 16px */
+}
+
+/*
+ * Styles for the card's title.
+ * Typically describes the metric being displayed (e.g., "Total Revenue").
+ */
+.title {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.25;
+}
+
+/*
+ * A styled container for the icon.
+ * Often has a distinct background color and shape.
+ */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem; /* 40px */
+  width: 2.5rem; /* 40px */
+  border-radius: 50%;
+  background-color: var(--icon-background, #f1f5f9);
+  color: var(--icon-color, #334155);
+  flex-shrink: 0;
+}
+
+/*
+ * The main content area, holding the primary metric value.
+ */
+.content {
+  margin-bottom: 1rem; /* 16px */
+}
+
+/*
+ * The primary metric value (e.g., "$45,231.89").
+ * Styled to be the most prominent element on the card.
+ */
+.value {
+  font-size: 2rem; /* 32px */
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary, #1e293b);
+  line-height: 1;
+}
+
+/*
+ * Footer section, typically showing the change or delta compared to a previous period.
+ */
+.footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* 8px */
+}
+
+/*
+ * Container for the delta (e.g., "+12.5%").
+ * Uses flexbox to align an optional icon with the text.
+ */
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem; /* 4px */
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+}
+
+/*
+ * Modifier class for a positive change (increase).
+ * Applies a success color (typically green).
+ */
+.positive {
+  color: var(--color-success, #16a34a);
+}
+
+/*
+ * Modifier class for a negative change (decrease).
+ * Applies a danger color (typically red).
+ */
+.negative {
+  color: var(--color-danger, #dc2626);
+}
+
+/*
+ * A small description or context for the delta (e.g., "vs. last month").
+ */
+.deltaContext {
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-secondary, #64748b);
+}

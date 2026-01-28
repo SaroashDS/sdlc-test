@@ -1,0 +1,34 @@
+/**
+ * src/components/ui/Loader/Loader.module.css
+ * Styles for the Loader component.
+ * This file defines a simple CSS-only spinning loader.
+ */
+
+/* The main loader element */
+.loader {
+  /* Defines the size of the spinner */
+  width: 48px;
+  height: 48px;
+
+  /* Creates the circular shape and track */
+  border-radius: 50%;
+  border: 5px solid var(--color-border-subtle, #f3f3f3); /* Light grey track */
+
+  /* Defines the colored part of the spinner that moves */
+  border-top-color: var(--color-primary, #3498db); /* Blue spinning part */
+
+  /* Applies the spinning animation */
+  animation: spin 1s linear infinite;
+}
+
+/* Defines the rotation animation for the loader */
+@keyframes spin {
+  /* Start of the animation */
+  0% {
+    transform: rotate(0deg);
+  }
+  /* End of the animation */
+  100% {
+    transform: rotate(360deg);
+  }
+}

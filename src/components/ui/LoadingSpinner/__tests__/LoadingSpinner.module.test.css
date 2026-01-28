@@ -1,0 +1,111 @@
+// LoadingSpinner.module.test.ts
+
+jest.mock('./LoadingSpinner.module.css', () => ({
+  loadingSpinner: 'mock-loadingSpinner',
+  spin: 'mock-spin',
+}), { virtual: true });
+
+describe('LoadingSpinner.module', () => {
+  let originalConsoleError: any;
+
+  beforeAll(() => {
+    originalConsoleError = console.error;
+    console.error = jest.fn();
+  });
+
+  afterAll(() => {
+    console.error = originalConsoleError;
+  });
+
+  afterEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
+  it('should import styles successfully when CSS module exists', () => {
+    const styles = require('./LoadingSpinner.module.css');
+    expect(styles).toBeDefined();
+    expect(styles.loadingSpinner).toBe('mock-loadingSpinner');
+    expect(styles.spin).toBe('mock-spin');
+  });
+
+  it('should handle errors when CSS module import fails', () => {
+    jest.doMock('./LoadingSpinner.module.css', () => {
+      throw new Error('Failed to import CSS module');
+    }, { virtual: true });
+
+    const consoleErrorSpy = jest.spyOn(console, 'error');
+
+    const styles = require('./LoadingSpinner.module.css').default;
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Error importing LoadingSpinner.module.css:",
+      new Error('Failed to import CSS module')
+    );
+
+    expect(styles).toBeDefined();
+    expect(styles.loadingSpinner).toBe('loadingSpinner');
+    expect(styles.spin).toBe('spin');
+  });
+
+  it('should provide default class names when CSS module import fails', () => {
+    jest.doMock('./LoadingSpinner.module.css', () => {
+      throw new Error('Failed to import CSS module');
+    }, { virtual: true });
+
+    const styles = require('./LoadingSpinner.module.css').default;
+
+    expect(styles.loadingSpinner).toBe('loadingSpinner');
+    expect(styles.spin).toBe('spin');
+  });
+
+  it('should not throw an error when CSS module import succeeds', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error');
+    require('./LoadingSpinner.module.css');
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+  });
+
+  it('should return the mocked styles when CSS module is mocked', () => {
+    const styles = require('./LoadingSpinner.module.css');
+    expect(styles.loadingSpinner).toBe('mock-loadingSpinner');
+    expect(styles.spin).toBe('mock-spin');
+  });
+
+  it('should handle a different error message from CSS module import', () => {
+    jest.doMock('./LoadingSpinner.module.css', () => {
+      throw new Error('Another CSS module error');
+    }, { virtual: true });
+
+    const consoleErrorSpy = jest.spyOn(console, 'error');
+
+    const styles = require('./LoadingSpinner.module.css').default;
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Error importing LoadingSpinner.module.css:",
+      new Error('Another CSS module error')
+    );
+
+    expect(styles).toBeDefined();
+    expect(styles.loadingSpinner).toBe('loadingSpinner');
+    expect(styles.spin).toBe('spin');
+  });
+
+  it('should handle an empty error object from CSS module import', () => {
+    jest.doMock('./LoadingSpinner.module.css', () => {
+      throw {};
+    }, { virtual: true });
+
+    const consoleErrorSpy = jest.spyOn(console, 'error');
+
+    const styles = require('./LoadingSpinner.module.css').default;
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Error importing LoadingSpinner.module.css:",
+      {}
+    );
+
+    expect(styles).toBeDefined();
+    expect(styles.loadingSpinner).toBe('loadingSpinner');
+    expect(styles.spin).toBe('spin');
+  });
+});

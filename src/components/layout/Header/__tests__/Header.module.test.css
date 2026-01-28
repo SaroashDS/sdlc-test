@@ -1,0 +1,202 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import styles from './Header.module.css';
+
+// Add the jest-axe matcher
+expect.extend(toHaveNoViolations);
+
+/**
+ * NOTE: A CSS module file itself cannot be unit-tested directly as it contains no executable code.
+ * The tests below are for a hypothetical React component (`Header.tsx`) that consumes these styles.
+ * This approach validates that the CSS classes are applied correctly to the component's structure,
+ * which is the most effective way to test a CSS module in a Jest/RTL environment.
+ */
+
+// --- Hypothetical Header Component ---
+// This component is assumed to exist for the purpose of these tests.
+// It demonstrates a typical usage of the Header.module.css file.
+
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface User {
+  name:string;
+}
+
+interface HeaderProps {
+  siteTitle: string;
+  navItems: NavItem[];
+  activePath?: string;
+  user?: User;
+  onLogin?: () => void;
+  onLogout?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({
+  siteTitle,
+  navItems,
+  activePath = '/',
+  user,
+  onLogin = () => {},
+  onLogout = () => {},
+}) => (
+  <header className={styles.header} data-testid="header">
+    <div className={styles.container}>
+      <a href="/" className={styles.logo}>
+        {siteTitle}
+      </a>
+      <nav className={styles.nav}>
+        {navItems.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className={`${styles.navLink} ${
+              activePath === item.href ? styles.active : ''
+            }`}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <div className={styles.actions}>
+        {user ? (
+          <>
+            <span>Welcome, {user.name}</span>
+            <button onClick={onLogout}>Logout</button>
+          </>
+        ) : (
+          <button onClick={onLogin}>Login</button>
+        )}
+      </div>
+    </div>
+  </header>
+);
+
+// --- Tests ---
+
+describe('Header Component (using Header.module.css)', () => {
+  const mockNavItems: NavItem[] = [
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ];
+
+  const mockUser: User = { name: 'Jane Doe' };
+
+  describe('Rendering and Structure', () => {
+    it('should render correctly and match snapshot for a logged-out user', () => {
+      const { container } = render(
+        <Header siteTitle="MyApp" navItems={mockNavItems} />
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('should render correctly and match snapshot for a logged-in user', () => {
+        const { container } = render(
+          <Header siteTitle="MyApp" navItems={mockNavItems} user={mockUser} />
+        );
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+    it('should apply the correct base classes from the CSS module', () => {
+      render(<Header siteTitle="MyApp" navItems={mockNavItems} />);
+
+      const headerElement = screen.getByTestId('header');
+      expect(headerElement).toHaveClass(styles.header);
+
+      // The container is a direct child of the header
+      expect(headerElement.firstChild).toHaveClass(styles.container);
+
+      const logo = screen.getByText('MyApp');
+      expect(logo).toHaveClass(styles.logo);
+
+      const nav = screen.getByRole('navigation');
+      expect(nav).toHaveClass(styles.nav);
+
+      const navLinks = screen.getAllByRole('link');
+      // The first link is the logo, the rest are nav links
+      expect(navLinks[1]).toHaveClass(styles.navLink);
+      expect(navLinks[2]).toHaveClass(styles.navLink);
+      expect(navLinks[3]).toHaveClass(styles.navLink);
+
+      const loginButton = screen.getByRole('button', { name: /login/i });
+      // The actions div is the parent of the button
+      expect(loginButton.parentElement).toHaveClass(styles.actions);
+    });
+  });
+
+  describe('Props and Content', () => {
+    it('should display the correct site title', () => {
+      render(<Header siteTitle="Test Site" navItems={mockNavItems} />);
+      expect(screen.getByRole('link', { name: 'Test Site' })).toBeInTheDocument();
+    });
+
+    it('should render all navigation items provided via props', () => {
+      render(<Header siteTitle="MyApp" navItems={mockNavItems} />);
+      mockNavItems.forEach(item => {
+        expect(screen.getByRole('link', { name: item.label })).toBeInTheDocument();
+      });
+    });
+
+    it('should apply the "active" class to the correct navigation link', () => {
+      const activePath = '/about';
+      render(
+        <Header
+          siteTitle="MyApp"
+          navItems={mockNavItems}
+          activePath={activePath}
+        />
+      );
+
+      const activeLink = screen.getByRole('link', { name: 'About' });
+      const inactiveLink = screen.getByRole('link', { name: 'Home' });
+
+      expect(activeLink).toHaveClass(styles.navLink, styles.active);
+      expect(inactiveLink).toHaveClass(styles.navLink);
+      expect(inactiveLink).not.toHaveClass(styles.active);
+    });
+  });
+
+  describe('User Authentication Scenarios', () => {
+    it('should display a "Login" button when no user is provided', () => {
+      render(<Header siteTitle="MyApp" navItems={mockNavItems} />);
+      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /logout/i })).not.toBeInTheDocument();
+      expect(screen.queryByText(/welcome/i)).not.toBeInTheDocument();
+    });
+
+    it('should display a welcome message and "Logout" button when a user is provided', () => {
+      render(
+        <Header siteTitle="MyApp" navItems={mockNavItems} user={mockUser} />
+      );
+      expect(screen.getByText(`Welcome, ${mockUser.name}`)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /login/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('should have no accessibility violations for the logged-out state', async () => {
+      const { container } = render(
+        <Header siteTitle="MyApp" navItems={mockNavItems} />
+      );
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations for the logged-in state', async () => {
+        const { container } = render(
+          <Header siteTitle="MyApp" navItems={mockNavItems} user={mockUser} />
+        );
+        const results = await axe(container);
+        expect(results).toHaveNoViolations();
+      });
+  });
+});

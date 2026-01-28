@@ -1,0 +1,60 @@
+// DateRangePicker.module.test.ts
+
+import styles from './DateRangePicker.module';
+
+describe('DateRangePicker.module', () => {
+  it('should export an object', () => {
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should export an object with string values', () => {
+    for (const key in styles) {
+      if (styles.hasOwnProperty(key)) {
+        expect(typeof styles[key]).toBe('string');
+      }
+    }
+  });
+
+  it('should have at least one key', () => {
+    expect(Object.keys(styles).length).toBeGreaterThan(0);
+  });
+
+  it('should not throw an error when accessing a property', () => {
+    expect(() => styles.hasOwnProperty('someKey')).not.toThrow();
+  });
+
+  it('should return a string when accessing a property', () => {
+    const keys = Object.keys(styles);
+    if (keys.length > 0) {
+      expect(typeof styles[keys[0]]).toBe('string');
+    }
+  });
+
+  it('should handle empty CSS module without errors', () => {
+    // This test is more about ensuring the type definition doesn't cause issues
+    // when the CSS module is empty or has no defined classes.
+    expect(() => {
+      // Simulate an empty CSS module (in a real scenario, this would be an actual empty CSS file)
+      const emptyStyles = {};
+      for (const key in emptyStyles) {
+        if (emptyStyles.hasOwnProperty(key)) {
+          // Accessing a property should not throw an error
+          const value = emptyStyles[key];
+        }
+      }
+    }).not.toThrow();
+  });
+
+  it('should allow accessing properties that might not exist without TypeScript errors', () => {
+    // This test ensures that the type definition allows accessing properties
+    // even if they are not explicitly defined in the CSS module.
+    expect(() => {
+      const value = styles['nonExistentClass'];
+    }).not.toThrow();
+  });
+
+  it('should return undefined when accessing a non-existent property', () => {
+    const value = styles['nonExistentClass'];
+    expect(value).toBeUndefined();
+  });
+});

@@ -1,0 +1,111 @@
+/**
+ * AppLayout.module.css
+ *
+ * CSS Module for the main application layout grid system.
+ * This file defines the structure for the header, sidebar, main content, and footer areas.
+ */
+
+/*
+ * The main grid container for the entire application.
+ * It establishes a CSS Grid layout that spans the full viewport height.
+ */
+.appLayout {
+  display: grid;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-background-secondary, #f4f7fa);
+
+  /* 
+   * Defines the grid structure:
+   * - Columns: A fixed-width sidebar and a flexible main content area.
+   * - Rows: Auto-height header, a flexible main area, and an auto-height footer.
+   */
+  grid-template-columns: 250px 1fr; /* Sidebar width | Main content */
+  grid-template-rows: auto 1fr auto; /* Header | Main content + Sidebar | Footer */
+  grid-template-areas:
+    'header header'
+    'sidebar main'
+    'footer footer';
+}
+
+/*
+ * Styles for the header section of the layout.
+ * It occupies the 'header' grid area.
+ */
+.header {
+  grid-area: header;
+  background-color: var(--color-background-primary, #ffffff);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  padding: 1rem 1.5rem;
+  z-index: 1000; /* Ensure header is above other content if needed */
+}
+
+/*
+ * Styles for the sidebar section.
+ * It occupies the 'sidebar' grid area.
+ */
+.sidebar {
+  grid-area: sidebar;
+  background-color: var(--color-background-primary, #ffffff);
+  border-right: 1px solid var(--color-border, #e0e0e0);
+  padding: 1.5rem;
+  overflow-y: auto; /* Allow scrolling if content exceeds height */
+}
+
+/*
+ * Styles for the main content area.
+ * It occupies the 'main' grid area.
+ */
+.main {
+  grid-area: main;
+  padding: 2rem;
+  overflow-y: auto; /* Allow scrolling for long content */
+}
+
+/*
+ * Styles for the footer section.
+ * It occupies the 'footer' grid area.
+ */
+.footer {
+  grid-area: footer;
+  background-color: var(--color-background-primary, #ffffff);
+  border-top: 1px solid var(--color-border, #e0e0e0);
+  padding: 1rem 1.5rem;
+  text-align: center;
+  color: var(--color-text-secondary, #6c757d);
+  font-size: 0.875rem;
+}
+
+/*
+ * ==========================================================================
+ * Responsive Design: Adjustments for smaller screens (e.g., tablets/mobiles)
+ * ==========================================================================
+ */
+
+/*
+ * On screens smaller than 768px, the layout stacks vertically.
+ * The sidebar moves below the main content or could be hidden/toggled.
+ */
+@media (max-width: 768px) {
+  .appLayout {
+    /* Switch to a single-column layout */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto auto; /* Header | Main | Sidebar | Footer */
+    grid-template-areas:
+      'header'
+      'main'
+      'sidebar'
+      'footer';
+  }
+
+  .sidebar {
+    border-right: none;
+    border-top: 1px solid var(--color-border, #e0e0e0);
+  }
+
+  .main,
+  .header,
+  .footer {
+    padding: 1rem;
+  }
+}

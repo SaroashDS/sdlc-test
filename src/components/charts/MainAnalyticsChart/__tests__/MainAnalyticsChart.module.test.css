@@ -1,0 +1,29 @@
+// src/components/charts/MainAnalyticsChart/MainAnalyticsChart.test.tsx
+
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import styles from './MainAnalyticsChart.module.css';
+
+describe('MainAnalyticsChart.module.css', () => {
+  it('should have the correct class names', () => {
+    expect(styles.chartContainer).toBeDefined();
+    expect(styles.chartTitle).toBeDefined();
+    expect(styles.chartWrapper).toBeDefined();
+    expect(styles.loadingContainer).toBeDefined();
+    expect(styles.errorContainer).toBeDefined();
+    expect(styles.errorMessage).toBeDefined();
+  });
+
+  it('should have unique class names', () => {
+    const classNames = Object.values(styles);
+    const uniqueClassNames = new Set(classNames);
+    expect(classNames.length).toBe(uniqueClassNames.size);
+  });
+
+  it('should not have empty class names', () => {
+    Object.values(styles).forEach(className => {
+      expect(className).toBeTruthy(); // Check if the string is not empty or null/undefined
+    });
+  });
+});

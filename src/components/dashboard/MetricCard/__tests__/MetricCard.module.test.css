@@ -1,0 +1,236 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
+
+// The component to be tested. Since the source file is a CSS module,
+// we are assuming a corresponding React component `MetricCard.tsx` exists
+// and uses these styles. The tests below are for that hypothetical component.
+import { MetricCard, MetricCardProps } from './MetricCard';
+
+// Mock the CSS module to return class names as strings. This is a standard
+// practice for testing components that use CSS modules with Jest.
+jest.mock('./MetricCard.module.css', () => ({
+  card: 'card',
+  header: 'header',
+  title: 'title',
+  iconWrapper: 'iconWrapper',
+  icon: 'icon',
+  body: 'body',
+  value: 'value',
+  change: 'change',
+  positive: 'positive',
+  negative: 'negative',
+  changeIcon: 'changeIcon',
+}));
+
+// Mock icon components that would be passed as props
+const MockUserIcon = () => <svg data-testid="user-icon" className="icon" />;
+const MockArrowUpIcon = () => <svg data-testid="arrow-up-icon" className="changeIcon" />;
+const MockArrowDownIcon = () => <svg data-testid="arrow-down-icon" className="changeIcon" />;
+
+// Mock the change indicator icons which are assumed to be internal to the component
+jest.mock('./ArrowUpIcon', () => ({
+  __esModule: true,
+  default: MockArrowUpIcon,
+}), { virtual: true });
+
+jest.mock('./ArrowDownIcon', () => ({
+    __esModule: true,
+    default: MockArrowDownIcon,
+}), { virtual: true });
+
+
+describe('MetricCard Component', () => {
+  const defaultProps: MetricCardProps = {
+    title: 'Total Users',
+    value: '10,482',
+    icon: <MockUserIcon />,
+  };
+
+  // Test case for basic rendering with required props
+  test('should render correctly with required props', () => {
+    render(<MetricCard {...defaultProps} />);
+
+    // Check if title and value are displayed
+    expect(screen.getByText('Total Users')).toBeInTheDocument();
+    expect(screen.getByText('10,482')).toBeInTheDocument();
+
+    // Check if the icon is rendered
+    expect(screen.getByTestId('user-icon')).toBeInTheDocument();
+
+    // Check if the change indicator is not present when `change` prop is not provided
+    expect(screen.queryByTestId('arrow-up-icon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('arrow-down-icon')).not.toBeInTheDocument();
+  });
+
+  // Test case for rendering with a positive change
+  test('should render with a positive change indicator', () => {
+    const props: MetricCardProps = {
+      ...defaultProps,
+      change: 5.2,
+    };
+    render(<MetricCard {...props} />);
+
+    const changeElement = screen.getByText(/\+5.2%/);
+    expect(changeElement).toBeInTheDocument();
+
+    // The parent container should have the 'positive' class
+    expect(changeElement.parentElement).toHaveClass('change positive');
+
+    // Check for the up arrow icon
+    expect(screen.getByTestId('arrow-up-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('arrow-down-icon')).not.toBeInTheDocument();
+  });
+
+  // Test case for rendering with a negative change
+  test('should render with a negative change indicator', () => {
+    const props: MetricCardProps = {
+      ...defaultProps,
+      change: -2.1,
+    };
+    render(<MetricCard {...props} />);
+
+    const changeElement = screen.getByText(/-2.1%/);
+    expect(changeElement).toBeInTheDocument();
+
+    // The parent container should have the 'negative' class
+    expect(changeElement.parentElement).toHaveClass('change negative');
+
+    // Check for the down arrow icon
+    expect(screen.getByTestId('arrow-down-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('arrow-up-icon')).not.toBeInTheDocument();
+  });
+
+  // Test case for when change is zero
+  test('should not render change indicator when change is 0', () => {
+    const props: MetricCardProps = {
+      ...defaultProps,
+      change: 0,
+    };
+    render(<MetricCard {...props} />);
+
+    // No change indicator should be present
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('arrow-up-icon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('arrow-down-icon')).not.toBeInTheDocument();
+  });
+
+  // Test case for custom change suffix
+  test('should render with a custom change suffix', () => {
+    const props: MetricCardProps = {
+      ...defaultProps,
+      change: 150,
+      changeSuffix: ' users',
+    };
+    render(<MetricCard {...props} />);
+
+    expect(screen.getByText(/\+150 users/)).toBeInTheDocument();
+  });
+
+  // Test case for applying an external className
+  test('should apply an external className to the root element', () => {
+    const { container } = render(<MetricCard {...defaultProps} className="custom-class" />);
+    
+    // The first child of the container is the root element of the component
+    expect(container.firstChild).toHaveClass('card custom-class');
+  });
+
+  // Snapshot test to catch unintended UI changes
+  test('should match the snapshot with all props', () => {
+    const props: MetricCardProps = {
+      title: 'Revenue',
+      value: '$45,231.89',
+      icon: <MockUserIcon />,
+      change: -1.8,
+      changeSuffix: '% this month',
+      className: 'extra-style',
+    };
+    const { container } = render(<MetricCard {...props} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  // Accessibility testing with jest-axe
+  describe('Accessibility', () => {
+    test('should have no accessibility violations with basic props', async () => {
+      const { container } = render(<MetricCard {...defaultProps} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    test('should have no accessibility violations with change indicator', async () => {
+      const props: MetricCardProps = {
+        ...defaultProps,
+        change: 5.2,
+      };
+      const { container } = render(<MetricCard {...props} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+  });
+});
+
+// Note: A placeholder implementation of the MetricCard component is assumed below
+// for these tests to be valid. This would typically reside in `MetricCard.tsx`.
+/*
+import React, { ReactNode } from 'react';
+import styles from './MetricCard.module.css';
+import ArrowUpIcon from './ArrowUpIcon';
+import ArrowDownIcon from './ArrowDownIcon';
+
+export interface MetricCardProps {
+  title: string;
+  value: string;
+  icon: ReactNode;
+  change?: number;
+  changeSuffix?: string;
+  className?: string;
+}
+
+export const MetricCard: React.FC<MetricCardProps> = ({
+  title,
+  value,
+  icon,
+  change,
+  changeSuffix = '%',
+  className,
+}) => {
+  const hasChange = typeof change === 'number' && change !== 0;
+  const isPositive = hasChange && change > 0;
+  const isNegative = hasChange && change < 0;
+
+  const changeClasses = [
+    styles.change,
+    isPositive && styles.positive,
+    isNegative && styles.negative,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <div className={[styles.card, className].filter(Boolean).join(' ')}>
+      <header className={styles.header}>
+        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.iconWrapper}>{icon}</div>
+      </header>
+      <div className={styles.body}>
+        <p className={styles.value}>{value}</p>
+        {hasChange && (
+          <div className={changeClasses}>
+            {isPositive && <ArrowUpIcon />}
+            {isNegative && <ArrowDownIcon />}
+            <span>
+              {isPositive ? '+' : ''}
+              {change}
+              {changeSuffix}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+*/

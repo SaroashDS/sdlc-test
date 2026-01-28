@@ -1,0 +1,85 @@
+// Dashboard.module.test.ts
+
+import styles from './Dashboard.module';
+
+jest.mock('./Dashboard.module.css', () => ({
+  dashboardContainer: 'mock-dashboardContainer',
+  dashboardHeader: 'mock-dashboardHeader',
+  dashboardContent: 'mock-dashboardContent',
+  dashboardSidebar: 'mock-dashboardSidebar',
+  dashboardMain: 'mock-dashboardMain',
+  dashboardItem: 'mock-dashboardItem',
+  dashboardItemTitle: 'mock-dashboardItemTitle',
+  dashboardItemContent: 'mock-dashboardItemContent',
+  loadingIndicator: 'mock-loadingIndicator',
+  errorMessage: 'mock-errorMessage',
+}));
+
+describe('Dashboard.module', () => {
+  it('should import styles correctly when CSS module loads successfully', () => {
+    expect(styles).toBeDefined();
+    expect(styles.dashboardContainer).toBe('mock-dashboardContainer');
+    expect(styles.dashboardHeader).toBe('mock-dashboardHeader');
+    expect(styles.dashboardContent).toBe('mock-dashboardContent');
+    expect(styles.dashboardSidebar).toBe('mock-dashboardSidebar');
+    expect(styles.dashboardMain).toBe('mock-dashboardMain');
+    expect(styles.dashboardItem).toBe('mock-dashboardItem');
+    expect(styles.dashboardItemTitle).toBe('mock-dashboardItemTitle');
+    expect(styles.dashboardItemContent).toBe('mock-dashboardItemContent');
+    expect(styles.loadingIndicator).toBe('mock-loadingIndicator');
+    expect(styles.errorMessage).toBe('mock-errorMessage');
+  });
+
+  it('should handle CSS module loading failure gracefully', () => {
+    const originalRequire = require;
+
+    // Mock the require function to simulate a CSS module loading error
+    (global as any).require = (moduleName: string) => {
+      if (moduleName === './Dashboard.module.css') {
+        throw new Error('Failed to load CSS module');
+      }
+      return originalRequire(moduleName);
+    };
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Clear the module cache to force re-import
+    jest.resetModules();
+    const stylesOnError = require('./Dashboard.module').default;
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to load Dashboard.module.css.  Returning empty styles object.",
+      new Error('Failed to load CSS module')
+    );
+
+    expect(stylesOnError).toEqual({
+      dashboardContainer: '',
+      dashboardHeader: '',
+      dashboardContent: '',
+      dashboardSidebar: '',
+      dashboardMain: '',
+      dashboardItem: '',
+      dashboardItemTitle: '',
+      dashboardItemContent: '',
+      loadingIndicator: '',
+      errorMessage: '',
+    });
+
+    // Restore the original require function and console.error
+    (global as any).require = originalRequire;
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should have all style properties defined', () => {
+    expect(styles).toHaveProperty('dashboardContainer');
+    expect(styles).toHaveProperty('dashboardHeader');
+    expect(styles).toHaveProperty('dashboardContent');
+    expect(styles).toHaveProperty('dashboardSidebar');
+    expect(styles).toHaveProperty('dashboardMain');
+    expect(styles).toHaveProperty('dashboardItem');
+    expect(styles).toHaveProperty('dashboardItemTitle');
+    expect(styles).toHaveProperty('dashboardItemContent');
+    expect(styles).toHaveProperty('loadingIndicator');
+    expect(styles).toHaveProperty('errorMessage');
+  });
+});

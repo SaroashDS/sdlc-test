@@ -1,0 +1,198 @@
+import {
+  colors,
+  spacing,
+  typography,
+  breakpoints,
+  borderRadius,
+  zIndex,
+  theme,
+  Theme,
+} from './variables';
+
+describe('Design System Variables: src/styles/variables.ts', () => {
+  describe('colors', () => {
+    it('should match the snapshot', () => {
+      expect(colors).toMatchSnapshot();
+    });
+
+    it('should contain a valid hex code for primary main color', () => {
+      expect(colors.primary.main).toBe('#007BFF');
+      expect(/^#([0-9A-F]{3}){1,2}$/i.test(colors.primary.main)).toBe(true);
+    });
+
+    it('should have contrastText defined for all stateful colors', () => {
+      const statefulColors = ['primary', 'secondary', 'error', 'warning', 'success'];
+      statefulColors.forEach((color) => {
+        expect(colors[color as keyof typeof colors]).toHaveProperty('contrastText');
+        expect(typeof (colors[color as keyof typeof colors] as any).contrastText).toBe('string');
+      });
+    });
+
+    it('should have specific text and background colors', () => {
+      expect(colors.text.primary).toBe('#212529');
+      expect(colors.background.default).toBe('#F8F9FA');
+    });
+  });
+
+  describe('spacing', () => {
+    it('should match the snapshot', () => {
+      expect(spacing).toMatchSnapshot();
+    });
+
+    it('should use rem units for non-zero values', () => {
+      Object.values(spacing).forEach((value) => {
+        if (value !== '0') {
+          expect(value).toContain('rem');
+        }
+      });
+    });
+
+    it('should have a base spacing of 1rem for key 2', () => {
+      expect(spacing[2]).toBe('1rem');
+    });
+
+    it('should have a zero spacing value', () => {
+      expect(spacing[0]).toBe('0');
+    });
+  });
+
+  describe('typography', () => {
+    it('should match the snapshot', () => {
+      expect(typography).toMatchSnapshot();
+    });
+
+    it('should define body, heading, and monospace font families', () => {
+      expect(typography.fontFamily.body).toBeDefined();
+      expect(typography.fontFamily.heading).toBeDefined();
+      expect(typography.fontFamily.monospace).toBeDefined();
+      expect(typography.fontFamily.body).toContain('Inter');
+    });
+
+    it('should have numeric font weights', () => {
+      Object.values(typography.fontWeight).forEach((weight) => {
+        expect(typeof weight).toBe('number');
+      });
+      expect(typography.fontWeight.regular).toBe(400);
+      expect(typography.fontWeight.bold).toBe(700);
+    });
+
+    it('should have a base font size of 1rem', () => {
+      expect(typography.fontSize.base).toBe('1rem');
+    });
+
+    it('should have numeric line heights', () => {
+      Object.values(typography.lineHeight).forEach((height) => {
+        expect(typeof height).toBe('number');
+      });
+      expect(typography.lineHeight.normal).toBe(1.5);
+    });
+  });
+
+  describe('breakpoints', () => {
+    it('should match the snapshot', () => {
+      expect(breakpoints).toMatchSnapshot();
+    });
+
+    it('should use px units for all values', () => {
+      Object.values(breakpoints).forEach((value) => {
+        expect(value).toContain('px');
+      });
+    });
+
+    it('should have a specific value for the "md" breakpoint', () => {
+      expect(breakpoints.md).toBe('768px');
+    });
+  });
+
+  describe('borderRadius', () => {
+    it('should match the snapshot', () => {
+      expect(borderRadius).toMatchSnapshot();
+    });
+
+    it('should have a "full" value for creating circles/pills', () => {
+      expect(borderRadius.full).toBe('9999px');
+    });
+
+    it('should have a "none" value of 0', () => {
+      expect(borderRadius.none).toBe('0');
+    });
+
+    it('should use rem units for sm, base, md, and lg values', () => {
+      expect(borderRadius.sm).toContain('rem');
+      expect(borderRadius.base).toContain('rem');
+      expect(borderRadius.md).toContain('rem');
+      expect(borderRadius.lg).toContain('rem');
+    });
+  });
+
+  describe('zIndex', () => {
+    it('should match the snapshot', () => {
+      expect(zIndex).toMatchSnapshot();
+    });
+
+    it('should have numeric values for stacking contexts, except for "auto"', () => {
+      Object.entries(zIndex).forEach(([key, value]) => {
+        if (key === 'auto') {
+          expect(value).toBe('auto');
+        } else {
+          expect(typeof value).toBe('number');
+        }
+      });
+    });
+
+    it('should have a higher value for modal than for dropdown', () => {
+      expect(zIndex.modal).toBeGreaterThan(zIndex.dropdown);
+    });
+
+    it('should have a negative value for hide', () => {
+      expect(zIndex.hide).toBe(-1);
+    });
+  });
+
+  describe('theme', () => {
+    it('should match the snapshot', () => {
+      expect(theme).toMatchSnapshot();
+    });
+
+    it('should be a composite object of all other exported variables', () => {
+      // Using toBe to check for referential equality
+      expect(theme.colors).toBe(colors);
+      expect(theme.spacing).toBe(spacing);
+      expect(theme.typography).toBe(typography);
+      expect(theme.breakpoints).toBe(breakpoints);
+      expect(theme.borderRadius).toBe(borderRadius);
+      expect(theme.zIndex).toBe(zIndex);
+    });
+
+    it('should have all the required top-level keys', () => {
+      const expectedKeys = [
+        'colors',
+        'spacing',
+        'typography',
+        'breakpoints',
+        'borderRadius',
+        'zIndex',
+      ];
+      expect(Object.keys(theme)).toEqual(expectedKeys);
+    });
+  });
+
+  describe('Theme Type', () => {
+    it('should be correctly inferred by TypeScript (compile-time check)', () => {
+      // This is a type-level test. It doesn't run, but it will fail
+      // the TypeScript compiler if the types are incorrect.
+      const myTheme: Theme = theme;
+
+      // Example of using the type to ensure correctness
+      const primaryColor: string = myTheme.colors.primary.main;
+      const baseSpacing: string = myTheme.spacing[2];
+      const boldWeight: number = myTheme.typography.fontWeight.bold;
+
+      // These expect statements are trivial but confirm the values are accessible
+      // via the typed object.
+      expect(primaryColor).toBe('#007BFF');
+      expect(baseSpacing).toBe('1rem');
+      expect(boldWeight).toBe(700);
+    });
+  });
+});

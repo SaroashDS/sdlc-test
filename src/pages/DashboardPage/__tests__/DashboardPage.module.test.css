@@ -1,0 +1,211 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import styles from './DashboardPage.module.css';
+
+/**
+ * @description
+ * Since DashboardPage.module.css is a CSS Module and not a JavaScript/TypeScript module,
+ * it doesn't contain any functions or logic to test directly. The "exports" of this
+ * file are CSS class names.
+ *
+ * The most effective way to test a CSS Module is to test a component that *uses* it.
+ * This ensures that the class names are correctly applied to the DOM elements based on
+ * component logic and props.
+ *
+ * The following tests use a mock `DashboardPage` component to verify that the classes
+ * from `DashboardPage.module.css` are applied as expected in various scenarios.
+ * This approach validates the contract between the component and its styles.
+ *
+ * We will use snapshot testing to capture the generated class names, which indirectly
+ * validates the structure defined in the CSS module.
+ */
+
+// --- Mock Components for Testing ---
+
+type WidgetSize = 'small' | 'medium' | 'large' | 'full';
+
+interface WidgetProps {
+  id: number;
+  title: string;
+  size?: WidgetSize;
+  isTall?: boolean;
+}
+
+const Widget: React.FC<WidgetProps> = ({
+  title,
+  size = 'small',
+  isTall = false,
+}) => {
+  const classNames = [
+    styles.widget,
+    size === 'medium' && styles.widgetMedium,
+    size === 'large' && styles.widgetLarge,
+    size === 'full' && styles.widgetFull,
+    isTall && styles.widgetTall,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <div data-testid={`widget-${title.toLowerCase()}`} className={classNames}>
+      <h2>{title}</h2>
+      <p>Widget Content</p>
+    </div>
+  );
+};
+
+interface DashboardPageProps {
+  widgets: WidgetProps[];
+}
+
+const MockDashboardPage: React.FC<DashboardPageProps> = ({ widgets }) => {
+  return (
+    <main className={styles.dashboardGrid} data-testid="dashboard-grid">
+      {widgets.map((widget) => (
+        <Widget key={widget.id} {...widget} />
+      ))}
+    </main>
+  );
+};
+
+// --- Jest Tests ---
+
+describe('DashboardPage.module.css', () => {
+  describe('Integration with a mock DashboardPage component', () => {
+    it('should render the main grid container with the correct base class', () => {
+      render(<MockDashboardPage widgets={[]} />);
+      const gridContainer = screen.getByTestId('dashboard-grid');
+      expect(gridContainer).toHaveClass(styles.dashboardGrid);
+    });
+
+    it('should apply the default widget class to all widgets', () => {
+      const testWidgets: WidgetProps[] = [
+        { id: 1, title: 'Sales' },
+        { id: 2, title: 'Users' },
+      ];
+      render(<MockDashboardPage widgets={testWidgets} />);
+
+      const salesWidget = screen.getByTestId('widget-sales');
+      const usersWidget = screen.getByTestId('widget-users');
+
+      expect(salesWidget).toHaveClass(styles.widget);
+      expect(usersWidget).toHaveClass(styles.widget);
+    });
+
+    it('should render correctly with a standard set of widgets and match snapshot', () => {
+      const testWidgets: WidgetProps[] = [
+        { id: 1, title: 'Sales' },
+        { id: 2, title: 'Users' },
+        { id: 3, title: 'Revenue' },
+      ];
+      const { container } = render(<MockDashboardPage widgets={testWidgets} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    describe('Widget Size Modifiers', () => {
+      it('should apply the ".widgetMedium" class for medium-sized widgets', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Analytics', size: 'medium' },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const widget = screen.getByTestId('widget-analytics');
+        expect(widget).toHaveClass(styles.widget, styles.widgetMedium);
+      });
+
+      it('should apply the ".widgetLarge" class for large-sized widgets', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Report', size: 'large' },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const widget = screen.getByTestId('widget-report');
+        expect(widget).toHaveClass(styles.widget, styles.widgetLarge);
+      });
+
+      it('should apply the ".widgetFull" class for full-width widgets', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Summary', size: 'full' },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const widget = screen.getByTestId('widget-summary');
+        expect(widget).toHaveClass(styles.widget, styles.widgetFull);
+      });
+
+      it('should only apply the base ".widget" class for default (small) widgets', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Quick Stats', size: 'small' },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const widget = screen.getByTestId('widget-quick stats');
+        expect(widget).toHaveClass(styles.widget);
+        expect(widget).not.toHaveClass(
+          styles.widgetMedium,
+          styles.widgetLarge,
+          styles.widgetFull,
+        );
+      });
+    });
+
+    describe('Widget Height Modifiers', () => {
+      it('should apply the ".widgetTall" class when isTall is true', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Chart', isTall: true },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const widget = screen.getByTestId('widget-chart');
+        expect(widget).toHaveClass(styles.widget, styles.widgetTall);
+      });
+
+      it('should not apply the ".widgetTall" class when isTall is false or undefined', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Info', isTall: false },
+          { id: 2, title: 'Details' },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const infoWidget = screen.getByTestId('widget-info');
+        const detailsWidget = screen.getByTestId('widget-details');
+
+        expect(infoWidget).not.toHaveClass(styles.widgetTall);
+        expect(detailsWidget).not.toHaveClass(styles.widgetTall);
+      });
+    });
+
+    describe('Combined Modifiers and Edge Cases', () => {
+      it('should correctly apply both size and height modifier classes', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Map', size: 'large', isTall: true },
+        ];
+        render(<MockDashboardPage widgets={testWidgets} />);
+        const widget = screen.getByTestId('widget-map');
+        expect(widget).toHaveClass(
+          styles.widget,
+          styles.widgetLarge,
+          styles.widgetTall,
+        );
+      });
+
+      it('should handle a mix of different widget types and match snapshot', () => {
+        const testWidgets: WidgetProps[] = [
+          { id: 1, title: 'Header', size: 'full' },
+          { id: 2, title: 'Graph', size: 'large', isTall: true },
+          { id: 3, title: 'Metric1', size: 'small' },
+          { id: 4, title: 'Metric2', size: 'small' },
+          { id: 5, title: 'Metric3', size: 'small' },
+          { id: 6, title: 'Log', size: 'medium' },
+          { id: 7, title: 'Status', size: 'medium' },
+        ];
+        const { container } = render(
+          <MockDashboardPage widgets={testWidgets} />,
+        );
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+      it('should render an empty dashboard without errors', () => {
+        const { container } = render(<MockDashboardPage widgets={[]} />);
+        const gridContainer = screen.getByTestId('dashboard-grid');
+        expect(gridContainer).toBeInTheDocument();
+        expect(gridContainer.children.length).toBe(0);
+        expect(container.firstChild).toMatchSnapshot();
+      });
+    });
+  });
+});

@@ -1,0 +1,78 @@
+// __tests__/DashboardShell.module.test.ts
+
+import styles, { Styles } from '../DashboardShell.module';
+
+// Mock the CSS module import
+jest.mock('../DashboardShell.module.css', () => ({
+  dashboardShell: 'dashboardShellClass',
+  dashboardShellContent: 'dashboardShellContentClass',
+  dashboardShellHeader: 'dashboardShellHeaderClass',
+  dashboardShellSidebar: 'dashboardShellSidebarClass',
+}));
+
+describe('DashboardShell.module', () => {
+  it('should export an object with the correct CSS class names', () => {
+    expect(styles).toBeDefined();
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should have the correct class names for each key', () => {
+    expect(styles.dashboardShell).toBe('dashboardShellClass');
+    expect(styles.dashboardShellContent).toBe('dashboardShellContentClass');
+    expect(styles.dashboardShellHeader).toBe('dashboardShellHeaderClass');
+    expect(styles.dashboardShellSidebar).toBe('dashboardShellSidebarClass');
+  });
+
+  it('should match the snapshot', () => {
+    expect(styles).toMatchSnapshot();
+  });
+
+  it('should have the correct type definition', () => {
+    const expectedType: Styles = {
+      'dashboardShell': 'string',
+      'dashboardShellContent': 'string',
+      'dashboardShellHeader': 'string',
+      'dashboardShellSidebar': 'string',
+    };
+
+    // This is a type check, not a runtime check.  We can't directly assert the type.
+    // However, we can verify that the keys exist and are strings.
+    expect(typeof styles.dashboardShell).toBe('string');
+    expect(typeof styles.dashboardShellContent).toBe('string');
+    expect(typeof styles.dashboardShellHeader).toBe('string');
+    expect(typeof styles.dashboardShellSidebar).toBe('string');
+  });
+
+  it('should handle empty CSS module', () => {
+    jest.unmock('../DashboardShell.module.css');
+    jest.mock('../DashboardShell.module.css', () => ({}));
+    const emptyStyles = require('../DashboardShell.module').default;
+    expect(emptyStyles).toEqual({});
+
+    // Restore the original mock
+    jest.mock('../DashboardShell.module.css', () => ({
+      dashboardShell: 'dashboardShellClass',
+      dashboardShellContent: 'dashboardShellContentClass',
+      dashboardShellHeader: 'dashboardShellHeaderClass',
+      dashboardShellSidebar: 'dashboardShellSidebarClass',
+    }));
+  });
+
+  it('should handle CSS module with missing keys', () => {
+    jest.unmock('../DashboardShell.module.css');
+    jest.mock('../DashboardShell.module.css', () => ({
+      dashboardShell: 'dashboardShellClass',
+    }));
+    const partialStyles = require('../DashboardShell.module').default;
+    expect(partialStyles.dashboardShell).toBe('dashboardShellClass');
+    expect(partialStyles.dashboardShellContent).toBeUndefined();
+
+    // Restore the original mock
+    jest.mock('../DashboardShell.module.css', () => ({
+      dashboardShell: 'dashboardShellClass',
+      dashboardShellContent: 'dashboardShellContentClass',
+      dashboardShellHeader: 'dashboardShellHeaderClass',
+      dashboardShellSidebar: 'dashboardShellSidebarClass',
+    }));
+  });
+});

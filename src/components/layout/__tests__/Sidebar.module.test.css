@@ -1,0 +1,55 @@
+// src/components/layout/Sidebar.module.test.tsx
+
+import styles from './Sidebar.module.css';
+
+describe('Sidebar.module.css', () => {
+  it('should export all style keys', () => {
+    expect(styles).toBeDefined();
+    expect(styles.sidebar).toBeDefined();
+    expect(styles.sidebarHeader).toBeDefined();
+    expect(styles.sidebarContent).toBeDefined();
+    expect(styles.sidebarFooter).toBeDefined();
+    expect(styles.activeLink).toBeDefined();
+    expect(styles.sidebarLink).toBeDefined();
+    expect(styles.sidebarLinkIcon).toBeDefined();
+    expect(styles.sidebarLinkText).toBeDefined();
+    expect(styles.logoContainer).toBeDefined();
+    expect(styles.logoImage).toBeDefined();
+    expect(styles.logoText).toBeDefined();
+    expect(styles.collapsed).toBeDefined();
+    expect(styles.expanded).toBeDefined();
+    expect(styles.sidebarToggleButton).toBeDefined();
+    expect(styles.sidebarToggleButtonIcon).toBeDefined();
+    expect(styles.sidebarMenuItem).toBeDefined();
+    expect(styles.sidebarMenuList).toBeDefined();
+  });
+
+  it('should have non-empty string values for all style keys', () => {
+    Object.keys(styles).forEach((key) => {
+      expect(typeof (styles as any)[key]).toBe('string');
+      expect((styles as any)[key].length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should not throw an error when accessing any style key', () => {
+    expect(() => {
+      styles.sidebar;
+      styles.sidebarHeader;
+      styles.sidebarContent;
+      styles.sidebarFooter;
+      styles.activeLink;
+      styles.sidebarLink;
+      styles.sidebarLinkIcon;
+      styles.sidebarLinkText;
+      styles.logoContainer;
+      styles.logoImage;
+      styles.logoText;
+      styles.collapsed;
+      styles.expanded;
+      styles.sidebarToggleButton;
+      styles.sidebarToggleButtonIcon;
+      styles.sidebarMenuItem;
+      styles.sidebarMenuList;
+    }).not.toThrow();
+  });
+});

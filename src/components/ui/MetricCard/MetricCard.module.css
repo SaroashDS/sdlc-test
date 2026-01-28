@@ -1,0 +1,19 @@
+// This file is a placeholder for CSS Modules.
+// TypeScript doesn't directly compile CSS files.
+// Instead, CSS Modules are typically handled by a build tool like Webpack or Parcel.
+// This file provides type definitions for the CSS classes defined in MetricCard.module.css.
+
+// Define the expected CSS module structure.  Adjust this interface to match the actual CSS classes.
+interface Styles {
+  metricCard: string;
+  metricCardTitle: string;
+  metricCardValue: string;
+  metricCardDescription: string;
+  // Add more CSS class names as needed, e.g.,
+  // metricCardIcon: string;
+}
+
+// Declare the CSS module so TypeScript recognizes it.
+declare const styles: Styles;
+
+export default styles;

@@ -1,0 +1,131 @@
+/**
+ * @file src/styles/variables.module.css
+ * @description CSS Module for global design tokens (colors, spacing, fonts).
+ * These CSS Custom Properties are defined on the :root pseudo-class to make them
+ * available globally throughout the application.
+ */
+
+:root {
+  /* ==========================================================================
+     Color Palette
+     ========================================================================== */
+
+  /* Primary Colors */
+  --color-primary-light: #7986cb;
+  --color-primary-main: #3f51b5;
+  --color-primary-dark: #303f9f;
+  --color-primary-contrast-text: #ffffff;
+
+  /* Secondary Colors */
+  --color-secondary-light: #ff4081;
+  --color-secondary-main: #f50057;
+  --color-secondary-dark: #c51162;
+  --color-secondary-contrast-text: #ffffff;
+
+  /* Text Colors */
+  --color-text-primary: #212121;
+  --color-text-secondary: #757575;
+  --color-text-disabled: #bdbdbd;
+  --color-text-on-dark: #ffffff;
+
+  /* Background Colors */
+  --color-background-default: #f5f5f5;
+  --color-background-paper: #ffffff;
+  --color-background-dark: #303030;
+
+  /* Status Colors */
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+
+  /* Border & Divider Colors */
+  --color-divider: rgba(0, 0, 0, 0.12);
+
+  /* ==========================================================================
+     Typography
+     ========================================================================== */
+
+  /* Font Families */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  --font-family-monospace: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
+    monospace;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Font Sizes (based on 16px root font-size) */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-xxl: 1.5rem; /* 24px */
+  --font-size-xxxl: 2rem; /* 32px */
+
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-loose: 1.75;
+
+  /* ==========================================================================
+     Spacing & Sizing
+     ========================================================================== */
+
+  /* Base unit is 8px */
+  --spacing-unit: 8px;
+  --spacing-xs: calc(0.5 * var(--spacing-unit)); /* 4px */
+  --spacing-sm: calc(1 * var(--spacing-unit)); /* 8px */
+  --spacing-md: calc(2 * var(--spacing-unit)); /* 16px */
+  --spacing-lg: calc(3 * var(--spacing-unit)); /* 24px */
+  --spacing-xl: calc(4 * var(--spacing-unit)); /* 32px */
+  --spacing-xxl: calc(6 * var(--spacing-unit)); /* 48px */
+  --spacing-xxxl: calc(8 * var(--spacing-unit)); /* 64px */
+
+  /* ==========================================================================
+     Borders & Shadows
+     ========================================================================== */
+
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  --border-radius-full: 9999px;
+
+  /* Box Shadows */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --box-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* ==========================================================================
+     Transitions
+     ========================================================================== */
+
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 300ms;
+  --transition-duration-slow: 500ms;
+  --transition-timing-function-ease: ease-in-out;
+
+  /* ==========================================================================
+     Z-Index
+     ========================================================================== */
+
+  --z-index-base: 1;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-toast: 1100;
+}

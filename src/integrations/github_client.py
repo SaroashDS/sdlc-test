@@ -165,22 +165,11 @@ class GitHubClient:
         try:
             client = await self.client
             
-            # 1. Fetch Repository Metadata (Dynamic Discovery)
+            # 1. Fetch Repository Metadata
             repo_data = await self.get_repository(owner, repo)
             if not repo_data:
                 raise RuntimeError(f"Repository {owner}/{repo} not found.")
             
-            # Check for empty repository
-            if repo_data.get("size") == 0:
-                logger.warning("Repository is empty, allowing local initialization", owner=owner, repo=repo)
-                return {
-                    "success": True,
-                    "branch_name": branch_name,
-                    "is_empty": True,
-                    "branch_url": f"https://github.com/{owner}/{repo}/tree/{branch_name}",
-                    "message": "Repository is empty. Branch will be created on initial push."
-                }
-
             # If no base_branch provided, use the discovered default_branch
             actual_base = base_branch or repo_data.get("default_branch", "main")
             
@@ -199,13 +188,23 @@ class GitHubClient:
                     "reused": True
                 }
 
-            # 3. Get Base Branch SHA
+            # 3. Get Base Branch SHA (This also serves as a robust 'is empty' check)
             base_ref_url = f"{self.base_url}/repos/{owner}/{repo}/git/refs/heads/{actual_base}"
             logger.info("Fetching base ref", url=base_ref_url)
             response = await client.get(base_ref_url)
             
-            if response.status_code != 200:
-                raise RuntimeError(f"Base branch '{actual_base}' not found for {owner}/{repo}. Status: {response.status_code}")
+            if response.status_code == 404:
+                # Truly empty repo - size 0 and no default branch ref
+                logger.warning("Repository appears truly empty (no default branch ref), allowing local initialization", owner=owner, repo=repo)
+                return {
+                    "success": True,
+                    "branch_name": branch_name,
+                    "is_empty": True,
+                    "branch_url": f"https://github.com/{owner}/{repo}/tree/{branch_name}",
+                    "message": "Repository is empty. Branch will be created on initial push."
+                }
+            elif response.status_code != 200:
+                raise RuntimeError(f"Error fetching base branch '{actual_base}': {response.text}")
                 
             base_sha = response.json()["object"]["sha"]
             

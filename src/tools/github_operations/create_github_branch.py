@@ -37,17 +37,25 @@ class CreateGitHubBranchTool:
             # 1. ENTERPRISE FIX: Normalize branch name and strip trailing dashes
             branch_name = self._generate_branch_name(story_id, story_title)
             
-            # 2. Get repository information
+            # 2. Get repository information and discover default branch
             if repository_info and repository_info.get("owner") and repository_info.get("repo"):
-                logger.info("Using provided repository information", 
-                           owner=repository_info["owner"], 
-                           repo=repository_info["repo"])
+                owner = repository_info["owner"]
+                repo = repository_info["repo"]
+                
+                # Discovery: Fetch real repo info from API to get the TRUE default branch
+                logger.info("Fetching repository metadata from API", owner=owner, repo=repo)
+                api_repo = await get_github_client().get_repository(owner, repo)
+                
                 repo_info = {
                     "success": True,
-                    "owner": repository_info["owner"],
-                    "repo": repository_info["repo"],
-                    "default_branch": repository_info.get("default_branch", "main")
+                    "owner": owner,
+                    "repo": repo,
+                    "default_branch": api_repo.get("default_branch", "main") if api_repo else repository_info.get("default_branch", "main")
                 }
+                logger.info("Using discovered repository information", 
+                           owner=owner, 
+                           repo=repo,
+                           default_branch=repo_info["default_branch"])
             else:
                 repo_info = await self._get_repository_info(workspace_path)
             
@@ -63,7 +71,8 @@ class CreateGitHubBranchTool:
             branch_result = await get_github_client().create_branch(
                 owner=repo_info["owner"],
                 repo=repo_info["repo"],
-                branch_name=branch_name
+                branch_name=branch_name,
+                base_branch=repo_info.get("default_branch")
             )
             
             if not branch_result["success"]:
@@ -76,6 +85,13 @@ class CreateGitHubBranchTool:
             # 4. Initialize local git repository
             is_empty = branch_result.get("is_empty", False)
             local_git_result = await self._setup_local_git(workspace_path, repo_info, branch_name, is_empty)
+            
+            if not local_git_result.get("success", False):
+                return {
+                    "success": False,
+                    "error": f"Failed to setup local git: {local_git_result.get('error')}",
+                    "duration_ms": int((time.time() - start_time) * 1000)
+                }
             
             duration_ms = int((time.time() - start_time) * 1000)
             
@@ -304,21 +320,39 @@ class CreateGitHubBranchTool:
             if not is_empty:
                 logger.info(f"Non-empty repo detected. Using git clone to guarantee shared history with {default_branch}.")
                 
+                # Robust rmtree for Windows (handles read-only files in .git)
+                def remove_readonly(func, path, excinfo):
+                    import stat
+                    os.chmod(path, stat.S_IWRITE)
+                    func(path)
+
                 # Step 1: Backup generated files (excluding .git if it exists)
                 temp_backup = workspace_path + "_backup"
                 if os.path.exists(workspace_path) and os.listdir(workspace_path):
                     if os.path.exists(temp_backup):
-                        shutil.rmtree(temp_backup)
+                        shutil.rmtree(temp_backup, onerror=remove_readonly)
                     os.makedirs(temp_backup, exist_ok=True)
                     for item in os.listdir(workspace_path):
                         if item != '.git':
                             src = os.path.join(workspace_path, item)
                             dst = os.path.join(temp_backup, item)
-                            if os.path.isdir(src):
-                                shutil.copytree(src, dst)
-                            else:
-                                shutil.copy2(src, dst)
-                    shutil.rmtree(workspace_path)
+                            try:
+                                if os.path.isdir(src):
+                                    shutil.copytree(src, dst)
+                                else:
+                                    shutil.copy2(src, dst)
+                            except Exception as e:
+                                logger.warning(f"Backup failed for {item}: {e}")
+                    
+                    try:
+                        shutil.rmtree(workspace_path, onerror=remove_readonly)
+                    except Exception as e:
+                        logger.error(f"Failed to clear workspace path: {e}")
+                        # If we can't delete it, try to at least remove .git
+                        git_path = os.path.join(workspace_path, ".git")
+                        if os.path.exists(git_path):
+                            shutil.rmtree(git_path, onerror=remove_readonly)
+                    
                     logger.info("Backed up generated files before cloning")
                 
                 # Step 2: Clone the repository (brings REAL history)

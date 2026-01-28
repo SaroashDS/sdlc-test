@@ -113,17 +113,37 @@ class AnalyzeErrorLogsTool:
         # Process structured validation errors
         if validation_errors:
             for i, error in enumerate(validation_errors):
+                # Handle both dicts and ValidationError objects
+                if hasattr(error, 'get'):
+                    content = error.get("message", "")
+                    file_path = error.get("file_path", "")
+                    line = error.get("line")
+                    column = error.get("column")
+                    rule = error.get("rule", "")
+                    source = error.get("source", "")
+                    severity = error.get("severity", "error")
+                    auto_fixable = error.get("auto_fixable", False)
+                else:
+                    content = getattr(error, 'message', str(error))
+                    file_path = getattr(error, 'file_path', "")
+                    line = getattr(error, 'line', None)
+                    column = getattr(error, 'column', None)
+                    rule = getattr(error, 'rule', "")
+                    source = getattr(error, 'source', "")
+                    severity = getattr(error, 'severity', "error")
+                    auto_fixable = getattr(error, 'auto_fixable', False)
+
                 error_data.append({
                     "id": f"validation_{i}",
                     "type": "validation_error",
-                    "content": error.get("message", ""),
-                    "file_path": error.get("file_path", ""),
-                    "line": error.get("line"),
-                    "column": error.get("column"),
-                    "rule": error.get("rule", ""),
-                    "source": error.get("source", ""),
-                    "severity": error.get("severity", "error"),
-                    "auto_fixable": error.get("auto_fixable", False)
+                    "content": content,
+                    "file_path": file_path,
+                    "line": line,
+                    "column": column,
+                    "rule": rule,
+                    "source": source,
+                    "severity": severity,
+                    "auto_fixable": auto_fixable
                 })
         
         return error_data

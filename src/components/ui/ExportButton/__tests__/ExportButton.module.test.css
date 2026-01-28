@@ -1,0 +1,40 @@
+import CSS from './ExportButton.module.css';
+
+describe('ExportButton.module.css', () => {
+  it('should define the exportButton class', () => {
+    expect(CSS.exportButton).toBeDefined();
+    expect(typeof CSS.exportButton).toBe('string');
+  });
+
+  it('should define the exportButtonDisabled class', () => {
+    expect(CSS.exportButtonDisabled).toBeDefined();
+    expect(typeof CSS.exportButtonDisabled).toBe('string');
+  });
+
+  it('should define the exportButtonIcon class', () => {
+    expect(CSS.exportButtonIcon).toBeDefined();
+    expect(typeof CSS.exportButtonIcon).toBe('string');
+  });
+
+  it('should define the exportButtonLabel class', () => {
+    expect(CSS.exportButtonLabel).toBeDefined();
+    expect(typeof CSS.exportButtonLabel).toBe('string');
+  });
+
+  it('should define the exportButtonLoading class', () => {
+    expect(CSS.exportButtonLoading).toBeDefined();
+    expect(typeof CSS.exportButtonLoading).toBe('string');
+  });
+
+  it('should have different class names for each property', () => {
+    const classNames = Object.values(CSS);
+    const uniqueClassNames = new Set(classNames);
+    expect(classNames.length).toBe(uniqueClassNames.size);
+  });
+
+  it('should not be empty strings for class names', () => {
+    Object.values(CSS).forEach(className => {
+      expect(className.length).toBeGreaterThan(0);
+    });
+  });
+});

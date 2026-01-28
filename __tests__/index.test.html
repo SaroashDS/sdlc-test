@@ -1,0 +1,201 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { initializeApp } from './index';
+
+// Mock the functions used in initializeApp
+const mockFetchData = jest.fn();
+const mockDisplayData = jest.fn();
+const mockDisplayError = jest.fn();
+const mockAddEventListener = jest.fn();
+const mockAlert = jest.fn();
+
+// Mock the global fetch function
+global.fetch = jest.fn();
+
+// Mock the document object
+const mockGetElementById = jest.fn();
+document.getElementById = mockGetElementById;
+
+// Mock console.warn and console.error
+const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+const mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+// Mock alert
+global.alert = mockAlert;
+
+describe('initializeApp', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // Reset the document body before each test
+    document.body.innerHTML = `
+      <div id="dataContainer"></div>
+      <div id="errorContainer"></div>
+      <button id="myButton"></button>
+    `;
+
+    // Mock implementations for the mocked functions
+    (global.fetch as jest.Mock) = jest.fn();
+    mockGetElementById.mockImplementation((id: string) => {
+      const element = document.createElement('div');
+      element.id = id;
+      return element;
+    });
+  });
+
+  afterEach(() => {
+    mockConsoleWarn.mockRestore();
+    mockConsoleError.mockRestore();
+  });
+
+  it('should call fetchData, displayData, and addEventListener on successful initialization', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ data: 'test data' }),
+    });
+
+    initializeApp();
+    // Wait for the promises to resolve
+    await Promise.resolve();
+
+    expect(global.fetch).toHaveBeenCalledWith("https://jsonplaceholder.typicode.com/todos/1");
+    expect(mockGetElementById).toHaveBeenCalledWith("dataContainer");
+    expect(mockGetElementById).toHaveBeenCalledWith("myButton");
+    expect(document.getElementById("myButton")?.addEventListener).toHaveBeenCalledWith("click", expect.any(Function));
+  });
+
+  it('should call displayError when fetchData fails', async () => {
+    (global.fetch as jest.Mock).mockRejectedValue(new Error('Failed to fetch'));
+
+    initializeApp();
+    await Promise.resolve();
+
+    expect(mockGetElementById).toHaveBeenCalledWith("errorContainer");
+    expect(mockConsoleError).toHaveBeenCalledWith("Error fetching data:", new Error('Failed to fetch'));
+  });
+
+  it('should handle the case where the button is not found', () => {
+    mockGetElementById.mockImplementation((id: string) => {
+      if (id === "myButton") {
+        return null;
+      }
+      const element = document.createElement('div');
+      element.id = id;
+      return element;
+    });
+
+    initializeApp();
+
+    expect(mockConsoleWarn).toHaveBeenCalledWith("Button with ID 'myButton' not found.");
+  });
+
+  it('should handle errors during initialization', () => {
+    mockGetElementById.mockImplementation(() => {
+      throw new Error('Error getting element');
+    });
+
+    initializeApp();
+
+    expect(mockConsoleError).toHaveBeenCalledWith("Error initializing app:", new Error('Error getting element'));
+  });
+});
+
+describe('fetchData', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (global.fetch as jest.Mock).mockClear();
+  });
+
+  it('should fetch data successfully', async () => {
+    const mockResponse = { ok: true, json: () => Promise.resolve({ data: 'test data' }) };
+    (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+    const { fetchData } = require('./index');
+    const data = await fetchData();
+
+    expect(global.fetch).toHaveBeenCalledWith("https://jsonplaceholder.typicode.com/todos/1");
+    expect(data).toEqual({ data: 'test data' });
+  });
+
+  it('should throw an error when the response is not ok', async () => {
+    const mockResponse = { ok: false, status: 404 };
+    (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+    const { fetchData } = require('./index');
+
+    await expect(fetchData()).rejects.toThrowError('HTTP error! status: 404');
+  });
+});
+
+describe('displayData', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetElementById.mockClear();
+  });
+
+  it('should display data in the data container', () => {
+    const data = { name: 'Test', value: 123 };
+    const dataContainer = document.createElement('div');
+    dataContainer.id = 'dataContainer';
+    mockGetElementById.mockReturnValue(dataContainer);
+    document.body.appendChild(dataContainer);
+
+    const { displayData } = require('./index');
+    displayData(data);
+
+    expect(mockGetElementById).toHaveBeenCalledWith('dataContainer');
+    expect(dataContainer.textContent).toBe(JSON.stringify(data, null, 2));
+  });
+
+  it('should log a warning when the data container is not found', () => {
+    mockGetElementById.mockReturnValue(null);
+
+    const { displayData } = require('./index');
+    displayData({ name: 'Test' });
+
+    expect(mockConsoleWarn).toHaveBeenCalledWith("Element with ID 'dataContainer' not found.");
+  });
+});
+
+describe('handleClick', () => {
+  it('should display an alert when the button is clicked', () => {
+    const { handleClick } = require('./index');
+    handleClick();
+
+    expect(mockAlert).toHaveBeenCalledWith('Button clicked!');
+  });
+});
+
+describe('displayError', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetElementById.mockClear();
+  });
+
+  it('should display an error message in the error container', () => {
+    const errorMessage = 'Test error message';
+    const errorContainer = document.createElement('div');
+    errorContainer.id = 'errorContainer';
+    mockGetElementById.mockReturnValue(errorContainer);
+    document.body.appendChild(errorContainer);
+
+    const { displayError } = require('./index');
+    displayError(errorMessage);
+
+    expect(mockGetElementById).toHaveBeenCalledWith('errorContainer');
+    expect(errorContainer.textContent).toBe(`Error: ${errorMessage}`);
+  });
+
+  it('should display an alert when the error container is not found', () => {
+    mockGetElementById.mockReturnValue(null);
+    const errorMessage = 'Test error message';
+
+    const { displayError } = require('./index');
+    displayError(errorMessage);
+
+    expect(mockConsoleError).toHaveBeenCalledWith("Element with ID 'errorContainer' not found.");
+    expect(mockAlert).toHaveBeenCalledWith(`Error: ${errorMessage}`);
+  });
+});

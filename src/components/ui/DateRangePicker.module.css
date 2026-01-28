@@ -1,0 +1,45 @@
+// This file is a placeholder for CSS Modules.
+// In a real project, this file would contain CSS rules.
+// Since TypeScript doesn't directly compile CSS, we define types here
+// to allow TypeScript to understand the CSS Modules.
+
+// Define a type for the CSS Modules.  This allows us to import the CSS
+// and get type checking on the class names.
+export interface Styles {
+  dateRangePicker?: string;
+  dateRangePicker__input?: string;
+  dateRangePicker__calendar?: string;
+  dateRangePicker__calendarHeader?: string;
+  dateRangePicker__calendarBody?: string;
+  dateRangePicker__calendarDay?: string;
+  dateRangePicker__calendarDay_selected?: string;
+  dateRangePicker__calendarDay_today?: string;
+  dateRangePicker__calendarDay_disabled?: string;
+  dateRangePicker__navigation?: string;
+  dateRangePicker__navigationButton?: string;
+  dateRangePicker__applyButton?: string;
+  dateRangePicker__cancelButton?: string;
+  dateRangePicker__buttonsContainer?: string;
+}
+
+// Create a dummy object that matches the Styles interface.
+// This allows us to import the CSS module and use it in our components.
+// In a real project, this would be populated by the CSS Modules loader.
+const styles: Styles = {
+  dateRangePicker: 'dateRangePicker',
+  dateRangePicker__input: 'dateRangePicker__input',
+  dateRangePicker__calendar: 'dateRangePicker__calendar',
+  dateRangePicker__calendarHeader: 'dateRangePicker__calendarHeader',
+  dateRangePicker__calendarBody: 'dateRangePicker__calendarBody',
+  dateRangePicker__calendarDay: 'dateRangePicker__calendarDay',
+  dateRangePicker__calendarDay_selected: 'dateRangePicker__calendarDay_selected',
+  dateRangePicker__calendarDay_today: 'dateRangePicker__calendarDay_today',
+  dateRangePicker__calendarDay_disabled: 'dateRangePicker__calendarDay_disabled',
+  dateRangePicker__navigation: 'dateRangePicker__navigation',
+  dateRangePicker__navigationButton: 'dateRangePicker__navigationButton',
+  dateRangePicker__applyButton: 'dateRangePicker__applyButton',
+  dateRangePicker__cancelButton: 'dateRangePicker__cancelButton',
+  dateRangePicker__buttonsContainer: 'dateRangePicker__buttonsContainer',
+};
+
+export default styles;

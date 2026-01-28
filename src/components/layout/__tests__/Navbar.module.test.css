@@ -1,0 +1,45 @@
+// src/components/layout/__tests__/Navbar.module.test.ts
+
+import styles from '../Navbar.module.css';
+
+describe('Navbar.module.css', () => {
+  it('should have the correct class names', () => {
+    expect(styles).toBeDefined();
+    expect(styles.navbar).toBeDefined();
+    expect(styles.logo).toBeDefined();
+    expect(styles.navLinks).toBeDefined();
+    expect(styles.navLink).toBeDefined();
+    expect(styles.active).toBeDefined();
+    expect(styles.menuButton).toBeDefined();
+    expect(styles.mobileMenu).toBeDefined();
+    expect(styles.open).toBeDefined();
+  });
+
+  it('should have string values for all class names', () => {
+    expect(typeof styles.navbar).toBe('string');
+    expect(typeof styles.logo).toBe('string');
+    expect(typeof styles.navLinks).toBe('string');
+    expect(typeof styles.navLink).toBe('string');
+    expect(typeof styles.active).toBe('string');
+    expect(typeof styles.menuButton).toBe('string');
+    expect(typeof styles.mobileMenu).toBe('string');
+    expect(typeof styles.open).toBe('string');
+  });
+
+  it('should not be an empty string for any class names', () => {
+    expect(styles.navbar.length).toBeGreaterThan(0);
+    expect(styles.logo.length).toBeGreaterThan(0);
+    expect(styles.navLinks.length).toBeGreaterThan(0);
+    expect(styles.navLink.length).toBeGreaterThan(0);
+    expect(styles.active.length).toBeGreaterThan(0);
+    expect(styles.menuButton.length).toBeGreaterThan(0);
+    expect(styles.mobileMenu.length).toBeGreaterThan(0);
+    expect(styles.open.length).toBeGreaterThan(0);
+  });
+
+  it('should have unique class names', () => {
+    const classNames = Object.values(styles);
+    const uniqueClassNames = new Set(classNames);
+    expect(classNames.length).toBe(uniqueClassNames.size);
+  });
+});

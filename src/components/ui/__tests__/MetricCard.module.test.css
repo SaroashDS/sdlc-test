@@ -1,0 +1,30 @@
+// src/components/ui/__tests__/MetricCard.module.test.tsx
+
+import styles from '../MetricCard.module.css';
+
+describe('MetricCard.module.css', () => {
+  it('should have the correct CSS class names', () => {
+    expect(styles).toBeDefined();
+    expect(styles.card).toBeDefined();
+    expect(styles.cardContent).toBeDefined();
+    expect(styles.cardHeader).toBeDefined();
+    expect(styles.cardIcon).toBeDefined();
+    expect(styles.cardTitle).toBeDefined();
+    expect(styles.metricValue).toBeDefined();
+  });
+
+  it('should have non-empty CSS class names', () => {
+    expect(styles.card).not.toBe('');
+    expect(styles.cardContent).not.toBe('');
+    expect(styles.cardHeader).not.toBe('');
+    expect(styles.cardIcon).not.toBe('');
+    expect(styles.cardTitle).not.toBe('');
+    expect(styles.metricValue).not.toBe('');
+  });
+
+  it('should have unique CSS class names', () => {
+    const classNames = Object.values(styles);
+    const uniqueClassNames = new Set(classNames);
+    expect(classNames.length).toBe(uniqueClassNames.size);
+  });
+});

@@ -1,0 +1,45 @@
+// src/pages/Dashboard/DashboardPage.module.test.tsx
+
+import styles from './DashboardPage.module.css';
+
+describe('DashboardPage.module.css', () => {
+  it('should export the correct CSS class names', () => {
+    expect(styles).toBeDefined();
+    expect(styles.container).toBeDefined();
+    expect(styles.content).toBeDefined();
+    expect(styles.header).toBeDefined();
+    expect(styles.main).toBeDefined();
+    expect(styles.sidebar).toBeDefined();
+    expect(styles.title).toBeDefined();
+  });
+
+  it('should have non-empty class names', () => {
+    expect(styles.container).not.toBe('');
+    expect(styles.content).not.toBe('');
+    expect(styles.header).not.toBe('');
+    expect(styles.main).not.toBe('');
+    expect(styles.sidebar).not.toBe('');
+    expect(styles.title).not.toBe('');
+  });
+
+  it('should have unique class names', () => {
+    const classNames = Object.values(styles);
+    const uniqueClassNames = new Set(classNames);
+    expect(classNames.length).toBe(uniqueClassNames.size);
+  });
+
+  it('should not contain any null or undefined class names', () => {
+    const classNames = Object.values(styles);
+    classNames.forEach(className => {
+      expect(className).not.toBeNull();
+      expect(className).not.toBeUndefined();
+    });
+  });
+
+  it('should not contain any whitespace-only class names', () => {
+    const classNames = Object.values(styles);
+    classNames.forEach(className => {
+      expect(className.trim()).toBe(className);
+    });
+  });
+});

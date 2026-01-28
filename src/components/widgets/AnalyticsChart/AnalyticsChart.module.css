@@ -1,0 +1,59 @@
+/*
+ * AnalyticsChart.module.css
+ * Styling for the AnalyticsChart component using CSS Modules.
+ */
+
+.chartContainer {
+  /* Glassmorphism & Surface Elevation */
+  background: rgba(30, 41, 59, 0.6); /* Semi-transparent dark slate */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem; /* 16px - soft, rounded corners */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  /* Layout & Sizing */
+  padding: 1.5rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Ensures content respects border-radius */
+  color: #f1f5f9; /* Default text color (light gray) */
+}
+
+.chartFigure {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartTitle {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: #ffffff;
+  flex-shrink: 0; /* Prevent title from shrinking on small containers */
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.chartWrapper {
+  position: relative;
+  flex-grow: 1; /* Allows the chart to fill the available vertical space */
+  width: 100%;
+  min-height: 250px; /* Ensures chart is usable even in small containers */
+}
+
+/* Add a subtle transition for a premium interactive feel */
+.chartContainer {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chartContainer:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+}

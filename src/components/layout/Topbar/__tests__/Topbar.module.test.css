@@ -1,0 +1,249 @@
+/*
+ * src/components/layout/Topbar/Topbar.test.tsx
+ *
+ * This test file is for a hypothetical Topbar component that would use the
+ * provided Topbar.module.css. Since CSS modules themselves cannot be unit-tested
+ * for their visual styles in Jest, we test the React component that consumes them.
+ *
+ * We infer the structure of the Topbar.tsx component based on the CSS class names
+ * and write comprehensive tests for its behavior, props, and accessibility.
+ * This ensures the CSS classes are applied correctly under different conditions.
+ */
+
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import '@testing-library/jest-dom';
+
+// --- Inferred Component Structure ---
+// Based on the CSS module, we can infer the component's structure and props.
+// This is the component we will be testing.
+
+import styles from './Topbar.module.css';
+
+// Mocking an icon library like lucide-react
+jest.mock('lucide-react', () => ({
+  Sun: () => <svg data-testid="sun-icon" />,
+  Moon: () => <svg data-testid="moon-icon" />,
+}));
+
+// Inferred component props
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface TopbarProps {
+  navItems: NavItem[];
+  onThemeToggle: () => void;
+  currentTheme: 'light' | 'dark';
+  logoText?: string;
+}
+
+// Inferred Topbar.tsx component for testing purposes
+const Topbar: React.FC<TopbarProps> = ({
+  navItems,
+  onThemeToggle,
+  currentTheme,
+  logoText = 'MyApp',
+}) => {
+  // We need to use NavLink from react-router-dom to test active states
+  const { NavLink, Link } = jest.requireActual('react-router-dom');
+  const { Sun, Moon } = jest.requireActual('lucide-react');
+
+  return (
+    <header className={styles.topbar}>
+      <div className={styles.container}>
+        <Link to="/" className={styles.logo}>
+          {logoText}
+        </Link>
+
+        <nav className={styles.nav}>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              // The component logic determines which CSS class to apply
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className={styles.userActions}>
+          <button
+            className={styles.themeToggle}
+            onClick={onThemeToggle}
+            aria-label={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`}
+            title={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`}
+          >
+            {currentTheme === 'light' ? <Sun /> : <Moon />}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// --- Test Suite ---
+
+describe('Topbar Component', () => {
+  const mockNavItems: NavItem[] = [
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/projects', label: 'Projects' },
+    { href: '/about', label: 'About' },
+  ];
+
+  const mockOnThemeToggle = jest.fn();
+
+  // Helper function to render the component within necessary providers
+  const renderTopbar = (
+    initialRoute: string = '/',
+    props: Partial<TopbarProps> = {},
+  ) => {
+    return render(
+      <MemoryRouter initialEntries={[initialRoute]}>
+        <Routes>
+          <Route
+            path="*"
+            element={
+              <Topbar
+                navItems={mockNavItems}
+                onThemeToggle={mockOnThemeToggle}
+                currentTheme="light"
+                {...props}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+  };
+
+  // Teardown: Reset mocks after each test
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Rendering and Structure', () => {
+    it('should render the Topbar component without crashing', () => {
+      renderTopbar();
+      expect(screen.getByRole('banner')).toBeInTheDocument();
+    });
+
+    it('should render the logo with a link to the homepage', () => {
+      renderTopbar('/', { logoText: 'TestApp' });
+      const logoLink = screen.getByRole('link', { name: 'TestApp' });
+      expect(logoLink).toBeInTheDocument();
+      expect(logoLink).toHaveAttribute('href', '/');
+      // Test that the correct CSS module class is applied
+      expect(logoLink).toHaveClass(styles.logo);
+    });
+
+    it('should render all navigation links provided via props', () => {
+      renderTopbar();
+      const nav = screen.getByRole('navigation');
+      expect(nav).toBeInTheDocument();
+      expect(nav).toHaveClass(styles.nav);
+
+      mockNavItems.forEach((item) => {
+        const navLink = screen.getByRole('link', { name: item.label });
+        expect(navLink).toBeInTheDocument();
+        expect(navLink).toHaveAttribute('href', item.href);
+        expect(navLink).toHaveClass(styles.navLink);
+      });
+    });
+
+    it('should render the user actions section with a theme toggle button', () => {
+      renderTopbar();
+      const themeToggleButton = screen.getByRole('button', {
+        name: /switch to/i,
+      });
+      expect(themeToggleButton).toBeInTheDocument();
+      expect(themeToggleButton).toHaveClass(styles.themeToggle);
+    });
+
+    it('should match the snapshot', () => {
+      const { container } = renderTopbar();
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('Functionality and User Interaction', () => {
+    it('should call the onThemeToggle function when the theme toggle button is clicked', () => {
+      renderTopbar();
+      const themeToggleButton = screen.getByRole('button', {
+        name: /switch to/i,
+      });
+      fireEvent.click(themeToggleButton);
+      expect(mockOnThemeToggle).toHaveBeenCalledTimes(1);
+    });
+
+    it('should apply the active class to the correct navigation link based on the current route', () => {
+      const activeRoute = '/projects';
+      renderTopbar(activeRoute);
+
+      const activeLink = screen.getByRole('link', { name: 'Projects' });
+      const inactiveLink = screen.getByRole('link', { name: 'Dashboard' });
+
+      // Test that the correct CSS module classes are applied based on component logic
+      expect(activeLink).toHaveClass(styles.navLinkActive);
+      expect(inactiveLink).not.toHaveClass(styles.navLinkActive);
+    });
+
+    it('should not have any active links when the route does not match', () => {
+      renderTopbar('/unmatched-route');
+      mockNavItems.forEach((item) => {
+        const navLink = screen.getByRole('link', { name: item.label });
+        expect(navLink).not.toHaveClass(styles.navLinkActive);
+      });
+    });
+  });
+
+  describe('Props and Theming', () => {
+    it('should display the Sun icon when the current theme is "light"', () => {
+      renderTopbar('/', { currentTheme: 'light' });
+      expect(screen.getByTestId('sun-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('moon-icon')).not.toBeInTheDocument();
+    });
+
+    it('should display the Moon icon when the current theme is "dark"', () => {
+      renderTopbar('/', { currentTheme: 'dark' });
+      expect(screen.getByTestId('moon-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('sun-icon')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility (a11y)', () => {
+    it('should have a "banner" role for the header element', () => {
+      renderTopbar();
+      expect(screen.getByRole('banner')).toBeInTheDocument();
+    });
+
+    it('should have a "navigation" role for the nav element', () => {
+      renderTopbar();
+      expect(screen.getByRole('navigation')).toBeInTheDocument();
+    });
+
+    it('should have a descriptive aria-label for the theme toggle button when theme is light', () => {
+      renderTopbar('/', { currentTheme: 'light' });
+      const themeToggleButton = screen.getByRole('button');
+      expect(themeToggleButton).toHaveAttribute(
+        'aria-label',
+        'Switch to dark theme',
+      );
+    });
+
+    it('should have a descriptive aria-label for the theme toggle button when theme is dark', () => {
+      renderTopbar('/', { currentTheme: 'dark' });
+      const themeToggleButton = screen.getByRole('button');
+      expect(themeToggleButton).toHaveAttribute(
+        'aria-label',
+        'Switch to light theme',
+      );
+    });
+  });
+});

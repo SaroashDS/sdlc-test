@@ -1,0 +1,55 @@
+// src/components/charts/__tests__/MainAnalyticsChart.module.test.tsx
+
+import styles from '../MainAnalyticsChart.module.css';
+
+describe('MainAnalyticsChart.module.css', () => {
+  it('should export the correct CSS class names', () => {
+    expect(styles).toBeDefined();
+    expect(styles.chartContainer).toBeDefined();
+    expect(styles.chartTitle).toBeDefined();
+    expect(styles.loadingContainer).toBeDefined();
+    expect(styles.noDataContainer).toBeDefined();
+    expect(styles.noDataText).toBeDefined();
+    expect(styles.titleContainer).toBeDefined();
+  });
+
+  it('should have non-empty string values for all CSS class names', () => {
+    expect(typeof styles.chartContainer).toBe('string');
+    expect(styles.chartContainer.length).toBeGreaterThan(0);
+
+    expect(typeof styles.chartTitle).toBe('string');
+    expect(styles.chartTitle.length).toBeGreaterThan(0);
+
+    expect(typeof styles.loadingContainer).toBe('string');
+    expect(styles.loadingContainer.length).toBeGreaterThan(0);
+
+    expect(typeof styles.noDataContainer).toBe('string');
+    expect(styles.noDataContainer.length).toBeGreaterThan(0);
+
+    expect(typeof styles.noDataText).toBe('string');
+    expect(styles.noDataText.length).toBeGreaterThan(0);
+
+    expect(typeof styles.titleContainer).toBe('string');
+    expect(styles.titleContainer.length).toBeGreaterThan(0);
+  });
+
+  it('should not have null or undefined values for any CSS class names', () => {
+    expect(styles.chartContainer).not.toBeNull();
+    expect(styles.chartContainer).not.toBeUndefined();
+
+    expect(styles.chartTitle).not.toBeNull();
+    expect(styles.chartTitle).not.toBeUndefined();
+
+    expect(styles.loadingContainer).not.toBeNull();
+    expect(styles.loadingContainer).not.toBeUndefined();
+
+    expect(styles.noDataContainer).not.toBeNull();
+    expect(styles.noDataContainer).not.toBeUndefined();
+
+    expect(styles.noDataText).not.toBeNull();
+    expect(styles.noDataText).not.toBeUndefined();
+
+    expect(styles.titleContainer).not.toBeNull();
+    expect(styles.titleContainer).not.toBeUndefined();
+  });
+});

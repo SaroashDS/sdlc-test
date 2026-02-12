@@ -1,0 +1,76 @@
+import styles, { Styles } from './DatePicker.module';
+
+describe('DatePicker.module', () => {
+  it('should export an object with all the expected CSS class names', () => {
+    const expectedKeys = [
+      'datePickerContainer',
+      'datePickerHeader',
+      'datePickerNavButton',
+      'datePickerNavButtonDisabled',
+      'datePickerTitle',
+      'datePickerGrid',
+      'datePickerDay',
+      'datePickerDayToday',
+      'datePickerDaySelected',
+      'datePickerDayDisabled',
+      'datePickerDayOfWeek',
+      'datePickerInput',
+      'datePickerInputFocused',
+      'datePickerPopup',
+      'datePickerClearButton',
+    ];
+
+    expectedKeys.forEach((key) => {
+      expect(styles).toHaveProperty(key);
+      expect(typeof (styles as any)[key]).toBe('string');
+    });
+  });
+
+  it('should have non-empty string values for all CSS class names', () => {
+    Object.keys(styles).forEach((key) => {
+      expect((styles as any)[key]).toBeTruthy(); // Check if the string is not empty
+    });
+  });
+
+  it('should match snapshot', () => {
+    expect(styles).toMatchSnapshot();
+  });
+
+  it('should have the correct values assigned to each key', () => {
+    const expectedValues = {
+      datePickerContainer: "datePickerContainer",
+      datePickerHeader: "datePickerHeader",
+      datePickerNavButton: "datePickerNavButton",
+      datePickerNavButtonDisabled: "datePickerNavButtonDisabled",
+      datePickerTitle: "datePickerTitle",
+      datePickerGrid: "datePickerGrid",
+      datePickerDay: "datePickerDay",
+      datePickerDayToday: "datePickerDayToday",
+      datePickerDaySelected: "datePickerDaySelected",
+      datePickerDayDisabled: "datePickerDayDisabled",
+      datePickerDayOfWeek: "datePickerDayOfWeek",
+      datePickerInput: "datePickerInput",
+      datePickerInputFocused: "datePickerInputFocused",
+      datePickerPopup: "datePickerPopup",
+      datePickerClearButton: "datePickerClearButton",
+    };
+
+    Object.keys(expectedValues).forEach((key) => {
+      expect((styles as any)[key]).toBe(expectedValues[key]);
+    });
+  });
+
+  it('should be an object', () => {
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should be immutable (attempting to modify should not change the original object)', () => {
+    const originalStyles = { ...styles };
+    try {
+      (styles as any).datePickerContainer = 'modifiedValue';
+    } catch (e) {
+      // Ignore the error if it's thrown due to strict mode or similar.
+    }
+    expect(styles.datePickerContainer).toBe(originalStyles.datePickerContainer);
+  });
+});

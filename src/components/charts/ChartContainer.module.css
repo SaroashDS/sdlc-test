@@ -1,0 +1,126 @@
+/**
+ * src/components/charts/ChartContainer.module.css
+ *
+ * Styles for the ChartContainer component, which acts as a wrapper
+ * for chart implementations. It provides a consistent look and feel,
+ * including a header, padding, and states for loading and errors.
+ */
+
+/* Use CSS variables for easy theming and customization */
+:root {
+  --chart-background: #ffffff;
+  --chart-border-color: #e0e0e0;
+  --chart-title-color: #333333;
+  --chart-text-color: #666666;
+  --chart-error-color: #d32f2f;
+  --chart-shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+/* The main container for the chart */
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 400px; /* Default height, can be overridden by props */
+  padding: 1.5rem;
+  background-color: var(--chart-background);
+  border: 1px solid var(--chart-border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--chart-shadow-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  box-sizing: border-box;
+}
+
+/* Header section containing the title and optional controls */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+/* Chart title style */
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--chart-title-color);
+}
+
+/* Container for any extra controls like date pickers or filters */
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Wrapper for the actual chart library (e.g., Recharts, Chart.js) */
+.chartWrapper {
+  position: relative;
+  flex-grow: 1; /* Allows the chart to fill the remaining space */
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * States: Loading and Error
+ * These overlays cover the chartWrapper to provide user feedback.
+ */
+
+/* Base style for overlays */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 6px; /* Slightly smaller than container for a nice inset look */
+  z-index: 10;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Loading state overlay */
+.loadingOverlay {
+  composes: overlay;
+}
+
+/* Error state overlay */
+.errorOverlay {
+  composes: overlay;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Specific message style for errors */
+.errorMessage {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--chart-error-color);
+}
+
+/* A simple spinner for the loading state */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

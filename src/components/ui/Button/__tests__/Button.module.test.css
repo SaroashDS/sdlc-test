@@ -1,0 +1,140 @@
+// src/components/ui/Button/Button.test.tsx
+
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Button from './Button'; // Assuming Button.tsx exists
+import styles from './Button.module.css'; // Import the CSS module
+
+describe('Button Component', () => {
+  it('renders without crashing', () => {
+    render(<Button onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('renders with the correct text', () => {
+    render(<Button onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByText('Click Me')).toBeInTheDocument();
+  });
+
+  it('calls the onClick handler when clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click Me</Button>);
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies the primary style when primary prop is true', () => {
+    render(<Button primary onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveClass(styles['button--primary']);
+  });
+
+  it('applies the secondary style when secondary prop is true', () => {
+    render(<Button secondary onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveClass(styles['button--secondary']);
+  });
+
+  it('applies the small style when small prop is true', () => {
+    render(<Button small onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveClass(styles['button--small']);
+  });
+
+  it('applies the large style when large prop is true', () => {
+    render(<Button large onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveClass(styles['button--large']);
+  });
+
+  it('disables the button when disabled prop is true', () => {
+    render(<Button disabled onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('does not call the onClick handler when disabled and clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button disabled onClick={handleClick}>Click Me</Button>);
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
+  it('renders with custom className', () => {
+    render(<Button className="custom-class" onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveClass('custom-class');
+  });
+
+  it('renders with all styles applied', () => {
+    render(
+      <Button
+        primary
+        secondary={false}
+        small
+        large={false}
+        disabled={false}
+        onClick={() => {}}
+      >
+        Click Me
+      </Button>
+    );
+    expect(screen.getByRole('button')).toHaveClass(styles['button--primary']);
+    expect(screen.getByRole('button')).toHaveClass(styles['button--small']);
+  });
+
+  it('matches snapshot', () => {
+    const { asFragment } = render(<Button onClick={() => {}}>Click Me</Button>);
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('matches snapshot with primary style', () => {
+    const { asFragment } = render(<Button primary onClick={() => {}}>Click Me</Button>);
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('matches snapshot with secondary style', () => {
+    const { asFragment } = render(<Button secondary onClick={() => {}}>Click Me</Button>);
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('matches snapshot with small style', () => {
+    const { asFragment } = render(<Button small onClick={() => {}}>Click Me</Button>);
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('matches snapshot with large style', () => {
+    const { asFragment } = render(<Button large onClick={() => {}}>Click Me</Button>);
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('matches snapshot when disabled', () => {
+    const { asFragment } = render(<Button disabled onClick={() => {}}>Click Me</Button>);
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('has accessible role of button', () => {
+    render(<Button onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute('role', 'button');
+  });
+
+  it('has correct aria-disabled attribute when disabled', () => {
+    render(<Button disabled onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('does not have aria-disabled attribute when not disabled', () => {
+    render(<Button onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('handles aria-label prop correctly', () => {
+    render(<Button aria-label="Custom Label" onClick={() => {}}>Click Me</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Custom Label');
+  });
+
+  it('handles aria-labelledby prop correctly', () => {
+    const { container } = render(
+      <>
+        <span id="label-id">Custom Label</span>
+        <Button aria-labelledby="label-id" onClick={() => {}}>Click Me</Button>
+      </>
+    );
+    expect(screen.getByRole('button')).toHaveAttribute('aria-labelledby', 'label-id');
+  });
+});

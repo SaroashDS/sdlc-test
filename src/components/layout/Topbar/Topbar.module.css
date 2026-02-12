@@ -1,0 +1,131 @@
+/*
+ * src/components/layout/Topbar/Topbar.module.css
+ *
+ * Styles for the Topbar component.
+ * This file uses CSS Modules to scope class names locally to the component,
+ * preventing style conflicts.
+ */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+  height: var(--topbar-height, 4rem); /* 64px */
+  padding: 0 1.5rem; /* 24px */
+  background-color: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width-container, 1280px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem; /* 16px */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 8px */
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.logo:hover,
+.logo:focus-visible {
+  opacity: 0.8;
+  outline: none;
+}
+
+.nav {
+  display: none; /* Hidden on mobile by default */
+}
+
+/* Show navigation on medium screens and up */
+@media (min-width: 768px) {
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* 24px */
+  }
+}
+
+.navLink {
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s ease-in-out;
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+/* Style for the active link */
+.navLinkActive {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Underline effect for active link */
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+  border-radius: 1px;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* 16px */
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem; /* 40px */
+  height: 2.5rem; /* 40px */
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.themeToggle:hover,
+.themeToggle:focus-visible {
+  background-color: var(--color-background-muted);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+  outline: none;
+}
+
+.themeToggle svg {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem; /* 20px */
+}

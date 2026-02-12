@@ -1,0 +1,94 @@
+/**
+ * src/components/layout/Header/Header.module.css
+ *
+ * Styles for the Header component.
+ */
+
+/* Main header container */
+.header {
+  background-color: var(--color-background-light, #ffffff);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+/* Inner container for content alignment and max-width */
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Logo styling */
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary, #007bff);
+  text-decoration: none;
+}
+
+.logo:hover {
+  opacity: 0.85;
+}
+
+/* Navigation container */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Individual navigation link */
+.navLink {
+  color: var(--color-text-secondary, #555);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Hover effect for navigation links */
+.navLink:hover {
+  color: var(--color-primary, #007bff);
+}
+
+/* Underline effect for active/hovered links */
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary, #007bff);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.navLink:hover::after,
+.navLink.active::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Style for the currently active link */
+.navLink.active {
+  color: var(--color-primary, #007bff);
+  font-weight: 600;
+}
+
+/* Container for user actions like login/logout buttons */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}

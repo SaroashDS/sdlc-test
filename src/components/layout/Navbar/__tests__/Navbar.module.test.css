@@ -1,0 +1,64 @@
+import styles, { Styles } from './Navbar.module';
+
+describe('Navbar.module', () => {
+  it('should export an object', () => {
+    expect(typeof styles).toBe('object');
+    expect(styles).not.toBeNull();
+  });
+
+  it('should export an object with the correct keys and values', () => {
+    const expectedKeys = [
+      'navbar',
+      'navbarBrand',
+      'navbarCollapse',
+      'navbarNav',
+      'navItem',
+      'navLink',
+      'active',
+      'dropdownMenu',
+      'dropdownItem',
+      'dropdownToggle',
+      'show',
+      'navbarToggler',
+      'navbarTogglerIcon',
+    ];
+
+    expectedKeys.forEach((key) => {
+      expect(styles).toHaveProperty(key);
+      expect(typeof styles[key as keyof Styles]).toBe('string');
+      expect(styles[key as keyof Styles]).toBe(key);
+    });
+  });
+
+  it('should match snapshot', () => {
+    expect(styles).toMatchSnapshot();
+  });
+
+  it('should have the correct type definition', () => {
+    const styleKeys = Object.keys(styles);
+    const typeKeys = Object.keys({} as Styles);
+
+    expect(styleKeys).toEqual(expect.arrayContaining(typeKeys));
+  });
+
+  it('should not be able to modify the exported object', () => {
+    expect(() => {
+      // @ts-expect-error
+      styles.navbar = 'modifiedNavbar';
+    }).toThrowError();
+  });
+
+  it('should have all keys with non-empty string values', () => {
+    Object.keys(styles).forEach(key => {
+      const value = styles[key as keyof Styles];
+      expect(typeof value).toBe('string');
+      expect(value.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should have unique values for each key', () => {
+    const values = Object.values(styles);
+    const uniqueValues = new Set(values);
+    expect(values.length).toBe(uniqueValues.size);
+  });
+});

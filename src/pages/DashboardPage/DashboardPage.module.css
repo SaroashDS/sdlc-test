@@ -1,0 +1,117 @@
+/**
+ * @file src/pages/DashboardPage/DashboardPage.module.css
+ * @description CSS Module for the DashboardPage component.
+ *              Defines a responsive CSS Grid layout for arranging dashboard widgets.
+ *
+ * Note: This is a CSS file, as required by the .module.css extension for CSS Modules.
+ * It is intended to be imported into a TypeScript component.
+ */
+
+/**
+ * The main container for the dashboard.
+ * Establishes a responsive CSS Grid layout.
+ */
+.dashboardGrid {
+  display: grid;
+  /* Creates a 12-column grid for flexible widget placement. */
+  grid-template-columns: repeat(12, 1fr);
+  /* Defines a default row height, allowing widgets to grow if needed. */
+  grid-auto-rows: minmax(200px, auto);
+  /* Sets the gap between grid items. */
+  gap: 1.5rem; /* 24px if root font-size is 16px */
+  padding: 1.5rem;
+}
+
+/**
+ * Base styles for all widgets within the dashboard grid.
+ * Each widget is a flex container to help align its internal content.
+ */
+.widget {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevents content from spilling out */
+
+  /* Default widget size: spans 4 out of 12 columns */
+  grid-column: span 4;
+}
+
+/* ==========================================================================
+   Widget Span Modifiers
+   ========================================================================== */
+
+/**
+ * Modifier for a medium-sized widget that spans 6 columns (half-width).
+ */
+.widgetMedium {
+  grid-column: span 6;
+}
+
+/**
+ * Modifier for a large widget that spans 8 columns (two-thirds width).
+ */
+.widgetLarge {
+  grid-column: span 8;
+}
+
+/**
+ * Modifier for a full-width widget that spans all 12 columns.
+ */
+.widgetFull {
+  grid-column: span 12;
+}
+
+/**
+ * Modifier for a tall widget that spans 2 rows.
+ */
+.widgetTall {
+  grid-row: span 2;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/**
+ * For tablet-sized screens (e.g., up to 1024px).
+ * Adjusts widget spans for better space utilization.
+ */
+@media (max-width: 1024px) {
+  .widget {
+    /* Default widgets now span 6 columns (half-width) */
+    grid-column: span 6;
+  }
+
+  .widgetLarge {
+    /* Large widgets become full-width */
+    grid-column: span 12;
+  }
+}
+
+/**
+ * For mobile-sized screens (e.g., up to 768px).
+ * The grid collapses into a single-column layout for vertical stacking.
+ */
+@media (max-width: 768px) {
+  .dashboardGrid {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  /* All widgets take up the full width in a single column on mobile */
+  .widget,
+  .widgetMedium,
+  .widgetLarge,
+  .widgetFull {
+    grid-column: span 12;
+  }
+
+  .widgetTall {
+    /* Reset row span on mobile to maintain a simple vertical flow */
+    grid-row: span 1;
+  }
+}

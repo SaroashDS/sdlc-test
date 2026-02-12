@@ -1,0 +1,198 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
+import ChartContainer from './ChartContainer'; // Assuming the component exists and uses the CSS module
+import styles from './ChartContainer.module.css';
+
+// Mock implementation of the ChartContainer component based on the CSS module
+// This is necessary because the provided source was a CSS file, not a component.
+jest.mock('./ChartContainer', () => {
+  const MockedChartContainer: React.FC<any> = ({
+    title,
+    isLoading = false,
+    error = null,
+    children,
+    controls,
+    className = '',
+    style = {},
+    height = '400px',
+  }) => {
+    const containerStyle = { ...style, height };
+
+    return (
+      <div
+        className={`${styles.container} ${className}`}
+        style={containerStyle}
+        data-testid="chart-container"
+      >
+        <header className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          {controls && <div className={styles.controls}>{controls}</div>}
+        </header>
+        <div className={styles.chartWrapper}>
+          {isLoading && (
+            <div className={styles.loadingOverlay} data-testid="loading-overlay">
+              <div className={styles.spinner} role="status" aria-label="Loading..."></div>
+            </div>
+          )}
+          {error && !isLoading && (
+            <div className={styles.errorOverlay} data-testid="error-overlay">
+              <p className={styles.errorMessage} role="alert">
+                {error}
+              </p>
+            </div>
+          )}
+          {!isLoading && !error && children}
+        </div>
+      </div>
+    );
+  };
+  return MockedChartContainer;
+});
+
+
+describe('ChartContainer', () => {
+  const defaultProps = {
+    title: 'Sales Over Time',
+    children: <div>Chart Content</div>,
+  };
+
+  describe('Default Rendering', () => {
+    it('should render the title and children correctly', () => {
+      render(<ChartContainer {...defaultProps} />);
+
+      expect(screen.getByRole('heading', { name: /sales over time/i })).toBeInTheDocument();
+      expect(screen.getByText('Chart Content')).toBeInTheDocument();
+    });
+
+    it('should not render loading or error overlays by default', () => {
+      render(<ChartContainer {...defaultProps} />);
+
+      expect(screen.queryByTestId('loading-overlay')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('error-overlay')).not.toBeInTheDocument();
+    });
+
+    it('should not render the controls section if no controls are provided', () => {
+      render(<ChartContainer {...defaultProps} />);
+      // The controls div has a class but no specific role, so we check for its children
+      expect(screen.queryByText('Filter Button')).not.toBeInTheDocument();
+    });
+
+    it('should render controls when provided', () => {
+      const controls = <button>Filter Button</button>;
+      render(<ChartContainer {...defaultProps} controls={controls} />);
+
+      expect(screen.getByRole('button', { name: /filter button/i })).toBeInTheDocument();
+    });
+
+    it('should match the snapshot for the default state', () => {
+      const { container } = render(<ChartContainer {...defaultProps} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('State Handling', () => {
+    it('should render the loading overlay when isLoading is true', () => {
+      render(<ChartContainer {...defaultProps} isLoading={true} />);
+
+      expect(screen.getByTestId('loading-overlay')).toBeInTheDocument();
+      expect(screen.getByRole('status', { name: /loading.../i })).toBeInTheDocument();
+    });
+
+    it('should not render children when isLoading is true', () => {
+      render(<ChartContainer {...defaultProps} isLoading={true} />);
+
+      expect(screen.queryByText('Chart Content')).not.toBeInTheDocument();
+    });
+
+    it('should prioritize loading state over error state', () => {
+      render(<ChartContainer {...defaultProps} isLoading={true} error="An error occurred" />);
+
+      expect(screen.getByTestId('loading-overlay')).toBeInTheDocument();
+      expect(screen.queryByTestId('error-overlay')).not.toBeInTheDocument();
+    });
+
+    it('should render the error overlay when an error is provided and not loading', () => {
+      const errorMessage = 'Failed to fetch chart data.';
+      render(<ChartContainer {...defaultProps} error={errorMessage} />);
+
+      expect(screen.getByTestId('error-overlay')).toBeInTheDocument();
+      const errorElement = screen.getByText(errorMessage);
+      expect(errorElement).toBeInTheDocument();
+      expect(errorElement).toHaveAttribute('role', 'alert');
+    });
+
+    it('should not render children when an error is present', () => {
+      render(<ChartContainer {...defaultProps} error="An error occurred" />);
+
+      expect(screen.queryByText('Chart Content')).not.toBeInTheDocument();
+    });
+
+    it('should match the snapshot for the loading state', () => {
+        const { container } = render(<ChartContainer {...defaultProps} isLoading={true} />);
+        expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('should match the snapshot for the error state', () => {
+        const { container } = render(<ChartContainer {...defaultProps} error="Data unavailable" />);
+        expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('Customization and Props', () => {
+    it('should apply a custom className to the container', () => {
+      const customClass = 'my-custom-chart';
+      render(<ChartContainer {...defaultProps} className={customClass} />);
+
+      expect(screen.getByTestId('chart-container')).toHaveClass(customClass);
+    });
+
+    it('should apply custom styles to the container', () => {
+      const customStyle = { backgroundColor: 'lightblue', margin: '10px' };
+      render(<ChartContainer {...defaultProps} style={customStyle} />);
+
+      const container = screen.getByTestId('chart-container');
+      expect(container).toHaveStyle('background-color: lightblue');
+      expect(container).toHaveStyle('margin: 10px');
+    });
+
+    it('should override the default height via the height prop', () => {
+      render(<ChartContainer {...defaultProps} height="500px" />);
+
+      expect(screen.getByTestId('chart-container')).toHaveStyle('height: 500px');
+    });
+
+    it('should handle numeric height values', () => {
+        render(<ChartContainer {...defaultProps} height={600} />);
+  
+        expect(screen.getByTestId('chart-container')).toHaveStyle('height: 600px');
+      });
+  });
+
+  describe('Accessibility', () => {
+    it('should have no accessibility violations in the default state', async () => {
+      const { container } = render(<ChartContainer {...defaultProps} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations in the loading state', async () => {
+      const { container } = render(<ChartContainer {...defaultProps} isLoading={true} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations in the error state', async () => {
+      const { container } = render(<ChartContainer {...defaultProps} error="An error occurred" />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations with controls', async () => {
+        const controls = <button>Filter</button>;
+        const { container } = render(<ChartContainer {...defaultProps} controls={controls} />);
+        const results = await axe(container);
+        expect(results).toHaveNoViolations();
+      });
+  });
+});

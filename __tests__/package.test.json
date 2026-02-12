@@ -1,0 +1,85 @@
+import packageJson from './package';
+
+describe('packageJson', () => {
+  it('should have the correct name', () => {
+    expect(packageJson.name).toBe('my-react-app');
+  });
+
+  it('should have the correct version', () => {
+    expect(packageJson.version).toBe('0.1.0');
+  });
+
+  it('should be private', () => {
+    expect(packageJson.private).toBe(true);
+  });
+
+  it('should have the correct description', () => {
+    expect(packageJson.description).toBe('A React application built with Vite');
+  });
+
+  it('should have the correct author', () => {
+    expect(packageJson.author).toBe('Your Name');
+  });
+
+  it('should have the correct license', () => {
+    expect(packageJson.license).toBe('MIT');
+  });
+
+  it('should have the correct keywords', () => {
+    expect(packageJson.keywords).toEqual(['react', 'vite', 'typescript']);
+  });
+
+  it('should have the correct homepage', () => {
+    expect(packageJson.homepage).toBe('https://example.com');
+  });
+
+  it('should have the correct repository', () => {
+    expect(packageJson.repository).toEqual({
+      type: 'git',
+      url: 'https://github.com/your-username/your-repo.git',
+    });
+  });
+
+  it('should have the correct bugs', () => {
+    expect(packageJson.bugs).toEqual({
+      url: 'https://github.com/your-username/your-repo/issues',
+    });
+  });
+
+  it('should have the correct scripts', () => {
+    expect(packageJson.scripts).toEqual({
+      dev: 'vite',
+      build: 'tsc && vite build',
+      serve: 'vite preview',
+      lint: 'eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0',
+      format: 'prettier --write .',
+    });
+  });
+
+  it('should have the correct dependencies', () => {
+    expect(packageJson.dependencies).toEqual({
+      react: '^18.2.0',
+      'react-dom': '^18.2.0',
+    });
+  });
+
+  it('should have the correct devDependencies', () => {
+    expect(packageJson.devDependencies).toEqual({
+      '@types/react': '^18.2.15',
+      '@types/react-dom': '^18.2.7',
+      '@vitejs/plugin-react': '^4.0.3',
+      typescript: '^5.0.2',
+      vite: '^4.4.5',
+      eslint: '^8.45.0',
+      prettier: '^3.0.0',
+    });
+  });
+
+  it('should have the correct browserslist', () => {
+    expect(packageJson.browserslist).toEqual(['>0.2%', 'not dead', 'not ie <= 11', 'not op_mini all']);
+  });
+
+  it('should match snapshot', () => {
+    expect(packageJson).toMatchSnapshot();
+  });
+});

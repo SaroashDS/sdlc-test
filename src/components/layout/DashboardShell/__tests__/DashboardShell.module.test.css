@@ -1,0 +1,84 @@
+// __tests__/DashboardShell.module.test.ts
+
+import styles from '../DashboardShell.module';
+
+// Mock the CSS module import
+jest.mock('../DashboardShell.module.css', () => ({
+  'dashboardShell': 'mocked-dashboardShell',
+  'content': 'mocked-content',
+  'someOtherClass': 'mocked-someOtherClass', // Add more classes as needed
+}));
+
+describe('DashboardShell.module', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should import the CSS module correctly', () => {
+    expect(styles).toBeDefined();
+  });
+
+  it('should have the expected class names', () => {
+    expect(styles.dashboardShell).toBe('mocked-dashboardShell');
+    expect(styles.content).toBe('mocked-content');
+    expect(styles.someOtherClass).toBe('mocked-someOtherClass'); // Add more assertions as needed
+  });
+
+  it('should handle missing class names gracefully', () => {
+    // Accessing a non-existent class name should not throw an error, but return undefined
+    expect((styles as any).nonExistentClass).toBeUndefined();
+  });
+
+  it('should not allow modification of the imported object', () => {
+    // Attempting to modify the imported object should not affect the original module
+    const originalDashboardShell = styles.dashboardShell;
+    try {
+      (styles as any).dashboardShell = 'modified-dashboardShell';
+    } catch (e) {
+      // Ignore the error if it's due to the object being read-only
+    }
+    expect(styles.dashboardShell).toBe(originalDashboardShell);
+  });
+
+  it('should handle empty CSS module', () => {
+    jest.unmock('../DashboardShell.module.css');
+    jest.mock('../DashboardShell.module.css', () => ({}));
+    const emptyStyles = require('../DashboardShell.module.css');
+    expect(Object.keys(emptyStyles).length).toBe(0);
+    jest.resetModules(); // Reset the module cache to avoid caching issues
+  });
+
+  it('should handle CSS module with special characters in class names', () => {
+    jest.unmock('../DashboardShell.module.css');
+    jest.mock('../DashboardShell.module.css', () => ({
+      'class-with-dash': 'mocked-class-with-dash',
+      'class_with_underscore': 'mocked-class_with_underscore',
+      'class:with:colon': 'mocked-class:with:colon',
+    }));
+    const specialCharStyles = require('../DashboardShell.module.css');
+    expect(specialCharStyles['class-with-dash']).toBe('mocked-class-with-dash');
+    expect(specialCharStyles['class_with_underscore']).toBe('mocked-class_with_underscore');
+    expect(specialCharStyles['class:with:colon']).toBe('mocked-class:with:colon');
+    jest.resetModules();
+  });
+
+  it('should handle CSS module with number as class names', () => {
+    jest.unmock('../DashboardShell.module.css');
+    jest.mock('../DashboardShell.module.css', () => ({
+      '123': 'mocked-123',
+    }));
+    const numberStyles = require('../DashboardShell.module.css');
+    expect(numberStyles['123']).toBe('mocked-123');
+    jest.resetModules();
+  });
+
+  it('should handle CSS module with empty string as class names', () => {
+    jest.unmock('../DashboardShell.module.css');
+    jest.mock('../DashboardShell.module.css', () => ({
+      '': 'mocked-empty-string',
+    }));
+    const emptyStringStyles = require('../DashboardShell.module.css');
+    expect(emptyStringStyles['']).toBe('mocked-empty-string');
+    jest.resetModules();
+  });
+});

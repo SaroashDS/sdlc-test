@@ -1,0 +1,116 @@
+import tsconfig from '../tsconfig.json';
+
+describe('tsconfig.json', () => {
+  // Note: This test file verifies the configuration settings in tsconfig.json.
+  // It ensures that critical compiler options are set according to project standards.
+
+  describe('Compiler Options', () => {
+    const {
+      compilerOptions
+    } = tsconfig;
+
+    it('should have compilerOptions defined', () => {
+      expect(compilerOptions).toBeDefined();
+      expect(typeof compilerOptions).toBe('object');
+    });
+
+    describe('Type Checking', () => {
+      it('should enable all strict type-checking options', () => {
+        expect(compilerOptions.strict).toBe(true);
+      });
+
+      it('should report errors on unused local variables', () => {
+        expect(compilerOptions.noUnusedLocals).toBe(true);
+      });
+
+      it('should report errors on unused parameters', () => {
+        expect(compilerOptions.noUnusedParameters).toBe(true);
+      });
+
+      it('should enforce explicit returns in functions', () => {
+        expect(compilerOptions.noImplicitReturns).toBe(true);
+      });
+
+      it('should prevent fallthrough cases in switch statements', () => {
+        expect(compilerOptions.noFallthroughCasesInSwitch).toBe(true);
+      });
+    });
+
+    describe('Modules', () => {
+      it('should use the "NodeNext" module system', () => {
+        expect(compilerOptions.module).toBe('NodeNext');
+      });
+
+      it('should use the "NodeNext" module resolution strategy', () => {
+        expect(compilerOptions.moduleResolution).toBe('NodeNext');
+      });
+
+      it('should allow importing JSON modules', () => {
+        expect(compilerOptions.resolveJsonModule).toBe(true);
+      });
+
+      it('should enable ES module interoperability', () => {
+        expect(compilerOptions.esModuleInterop).toBe(true);
+      });
+    });
+
+    describe('Language and Environment', () => {
+      it('should target "ES2022"', () => {
+        expect(compilerOptions.target).toBe('ES2022');
+      });
+
+      it('should have isolatedModules enabled', () => {
+        expect(compilerOptions.isolatedModules).toBe(true);
+      });
+    });
+
+    describe('Emit', () => {
+      it('should set the output directory to "./dist"', () => {
+        expect(compilerOptions.outDir).toBe('./dist');
+      });
+
+      it('should enable source map generation', () => {
+        expect(compilerOptions.sourceMap).toBe(true);
+      });
+
+      it('should not emit output on error', () => {
+        expect(compilerOptions.noEmitOnError).toBe(true);
+      });
+    });
+
+    describe('Project Configuration', () => {
+      it('should enforce consistent casing in file names', () => {
+        expect(compilerOptions.forceConsistentCasingInFileNames).toBe(true);
+      });
+
+      it('should skip type checking of declaration files', () => {
+        expect(compilerOptions.skipLibCheck).toBe(true);
+      });
+    });
+  });
+
+  describe('Project Files', () => {
+    it('should include all files in the "src" directory', () => {
+      expect(tsconfig.include).toBeDefined();
+      expect(Array.isArray(tsconfig.include)).toBe(true);
+      expect(tsconfig.include).toContain('src/**/*');
+    });
+
+    it('should exclude "node_modules" and "dist" directories', () => {
+      expect(tsconfig.exclude).toBeDefined();
+      expect(Array.isArray(tsconfig.exclude)).toBe(true);
+      expect(tsconfig.exclude).toContain('node_modules');
+      expect(tsconfig.exclude).toContain('dist');
+    });
+  });
+
+  describe('Schema and Display', () => {
+    it('should have a schema defined', () => {
+      expect(tsconfig['$schema']).toBe('https://json.schemastore.org/tsconfig');
+    });
+
+    it('should have the display name set to "Strict"', () => {
+      expect(tsconfig.display).toBe('Strict');
+    });
+  });
+});

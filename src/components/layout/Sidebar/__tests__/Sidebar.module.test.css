@@ -1,0 +1,30 @@
+// Sidebar.module.test.tsx
+
+import styles from './Sidebar.module.css';
+
+describe('Sidebar.module.css', () => {
+  it('should export the correct CSS class names', () => {
+    expect(styles).toBeDefined();
+    expect(styles.sidebar).toBeDefined();
+    expect(styles.sidebarHeader).toBeDefined();
+    expect(styles.sidebarContent).toBeDefined();
+    expect(styles.sidebarFooter).toBeDefined();
+    expect(styles.logo).toBeDefined();
+    expect(styles.menuList).toBeDefined();
+    expect(styles.menuItem).toBeDefined();
+    expect(styles.active).toBeDefined();
+    expect(styles.menuLink).toBeDefined();
+  });
+
+  it('should have non-empty class names', () => {
+    expect(styles.sidebar).not.toBe('');
+    expect(styles.sidebarHeader).not.toBe('');
+    expect(styles.sidebarContent).not.toBe('');
+    expect(styles.sidebarFooter).not.toBe('');
+    expect(styles.logo).not.toBe('');
+    expect(styles.menuList).not.toBe('');
+    expect(styles.menuItem).not.toBe('');
+    expect(styles.active).not.toBe('');
+    expect(styles.menuLink).not.toBe('');
+  });
+});

@@ -1,0 +1,66 @@
+// MetricCard.module.test.ts
+import styles from './MetricCard.module';
+
+describe('MetricCard.module', () => {
+  it('should export an object', () => {
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should have the expected CSS class names', () => {
+    expect(styles).toHaveProperty('metricCard');
+    expect(styles).toHaveProperty('metricCardTitle');
+    expect(styles).toHaveProperty('metricCardValue');
+    expect(styles).toHaveProperty('metricCardDescription');
+  });
+
+  it('should have string values for each CSS class name', () => {
+    expect(typeof styles.metricCard).toBe('string');
+    expect(typeof styles.metricCardTitle).toBe('string');
+    expect(typeof styles.metricCardValue).toBe('string');
+    expect(typeof styles.metricCardDescription).toBe('string');
+  });
+
+  it('should handle empty CSS module (all values are empty strings)', () => {
+    // Mock the styles object to simulate an empty CSS module
+    const mockStyles = {
+      metricCard: '',
+      metricCardTitle: '',
+      metricCardValue: '',
+      metricCardDescription: '',
+    };
+
+    // Temporarily override the imported styles with the mock
+    const originalStyles = { ...styles };
+    Object.assign(styles, mockStyles);
+
+    expect(styles.metricCard).toBe('');
+    expect(styles.metricCardTitle).toBe('');
+    expect(styles.metricCardValue).toBe('');
+    expect(styles.metricCardDescription).toBe('');
+
+    // Restore the original styles after the test
+    Object.assign(styles, originalStyles);
+  });
+
+  it('should handle CSS module with special characters in class names', () => {
+    // Mock the styles object to simulate special characters in class names
+    const mockStyles = {
+      metricCard: 'metric-card-!',
+      metricCardTitle: 'metricCardTitle#',
+      metricCardValue: 'metric_card_value$',
+      metricCardDescription: 'metricCardDescription%',
+    };
+
+    // Temporarily override the imported styles with the mock
+    const originalStyles = { ...styles };
+    Object.assign(styles, mockStyles);
+
+    expect(styles.metricCard).toBe('metric-card-!');
+    expect(styles.metricCardTitle).toBe('metricCardTitle#');
+    expect(styles.metricCardValue).toBe('metric_card_value$');
+    expect(styles.metricCardDescription).toBe('metricCardDescription%');
+
+    // Restore the original styles after the test
+    Object.assign(styles, originalStyles);
+  });
+});

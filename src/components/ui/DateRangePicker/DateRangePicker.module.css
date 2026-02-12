@@ -1,0 +1,22 @@
+// This file is a placeholder for CSS Modules.
+// TypeScript doesn't directly compile CSS Modules.
+// Instead, we use a type declaration file to provide type safety when importing CSS Modules in TypeScript.
+
+// Define the type for the CSS Modules.  This should match the class names defined in DateRangePicker.module.css.
+// If you have specific class names, replace the `any` with the appropriate type.
+// For example:
+// interface Styles {
+//   dateRangePicker: string;
+//   inputField: string;
+//   calendarContainer: string;
+// }
+
+// If you don't have specific class names, you can use a generic type.
+interface Styles {
+  [key: string]: string;
+}
+
+// Declare the module so TypeScript knows how to import the CSS Module.
+declare const styles: Styles;
+
+export default styles;

@@ -1,0 +1,92 @@
+/*
+ * src/components/dashboard/AnalyticsChart/AnalyticsChart.module.css
+ *
+ * Description: Styles to customize the chart container and legend for the
+ * AnalyticsChart component. This module provides scoped class names to prevent
+ * style collisions.
+ */
+
+/**
+ * Main container for the entire chart component.
+ * This wrapper provides padding, background, and a border for the chart area.
+ */
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Space between the chart and the legend */
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/**
+ * A responsive wrapper specifically for the chart's canvas or SVG element.
+ * It uses a relative position to allow for absolutely positioned tooltips
+ * or other chart overlays.
+ */
+.chartWrapper {
+  position: relative;
+  width: 100%;
+  flex-grow: 1; /* Allows the chart to fill available vertical space */
+  min-height: 250px; /* Ensures the chart is visible even in small containers */
+}
+
+/**
+ * Container for the custom chart legend.
+ * Uses flexbox to create a centered, wrapping list of legend items.
+ */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem 1.5rem; /* Defines row and column gap for legend items */
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0; /* Visual separator from the chart */
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+/**
+ * An individual item within the legend.
+ * Contains a color swatch and a text label.
+ */
+.legendItem {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.875rem; /* 14px */
+  color: #333;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/**
+ * Hover state for a legend item to provide user feedback.
+ */
+.legendItem:hover {
+  opacity: 0.8;
+}
+
+/**
+ * The colored circle or square representing a data series in the legend.
+ */
+.legendColorSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%; /* Creates a circular swatch */
+  margin-right: 0.5rem; /* Space between swatch and label */
+  display: inline-block;
+}
+
+/**
+ * The text label for a legend item.
+ */
+.legendLabel {
+  white-space: nowrap; /* Prevents the label from wrapping */
+}

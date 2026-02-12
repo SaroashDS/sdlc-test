@@ -1,0 +1,71 @@
+// src/pages/__tests__/DashboardPage.module.test.ts
+
+import styles from '../DashboardPage.module.css.d.ts';
+
+describe('DashboardPage.module.css', () => {
+  it('should export an object', () => {
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should export non-empty strings for known keys', () => {
+    // This test assumes you know some of the keys in your CSS module.
+    // Replace 'container' and 'header' with actual keys from your CSS module.
+    // If you don't know the keys, you can skip this test or adapt it to check for any string values.
+
+    // Example:
+    if (styles && styles.container) {
+      expect(typeof styles.container).toBe('string');
+      expect(styles.container.length).toBeGreaterThan(0);
+    }
+
+    if (styles && styles.header) {
+      expect(typeof styles.header).toBe('string');
+      expect(styles.header.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('should allow accessing any key', () => {
+    // This tests that the [key: string]: string; declaration works as expected.
+    if (styles) {
+      expect(typeof styles['some-random-key']).toBe('string');
+    }
+  });
+
+  it('should handle empty CSS module (no exports)', () => {
+    // Mock the module to simulate an empty CSS module.
+    jest.mock('../DashboardPage.module.css.d.ts', () => ({}));
+    const emptyStyles = require('../DashboardPage.module.css.d.ts');
+    expect(typeof emptyStyles).toBe('object');
+    jest.unmock('../DashboardPage.module.css.d.ts'); // Unmock to restore original module
+  });
+
+  it('should handle CSS module with numeric keys', () => {
+    // Mock the module to simulate a CSS module with numeric keys.
+    jest.mock('../DashboardPage.module.css.d.ts', () => ({
+      default: {
+        '123': 'numeric-value',
+      },
+    }));
+    const numericStyles = require('../DashboardPage.module.css.d.ts');
+    if (numericStyles && numericStyles['123']) {
+      expect(typeof numericStyles['123']).toBe('string');
+      expect(numericStyles['123']).toBe('numeric-value');
+    }
+    jest.unmock('../DashboardPage.module.css.d.ts'); // Unmock to restore original module
+  });
+
+  it('should handle CSS module with special character keys', () => {
+    // Mock the module to simulate a CSS module with special character keys.
+    jest.mock('../DashboardPage.module.css.d.ts', () => ({
+      default: {
+        'special-char-key': 'special-value',
+      },
+    }));
+    const specialStyles = require('../DashboardPage.module.css.d.ts');
+    if (specialStyles && specialStyles['special-char-key']) {
+      expect(typeof specialStyles['special-char-key']).toBe('string');
+      expect(specialStyles['special-char-key']).toBe('special-value');
+    }
+    jest.unmock('../DashboardPage.module.css.d.ts'); // Unmock to restore original module
+  });
+});

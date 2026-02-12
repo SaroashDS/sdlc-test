@@ -1,0 +1,66 @@
+import { useState, useEffect, useCallback } from 'react';
+
+interface AnalyticsData {
+  [key: string]: number;
+}
+
+interface AnalyticsDataState {
+  data: AnalyticsData | null;
+  loading: boolean;
+  error: string | null;
+}
+
+interface UseAnalyticsDataResult {
+  analyticsData: AnalyticsData | null;
+  loading: boolean;
+  error: string | null;
+  refreshData: () => void;
+}
+
+/**
+ * Custom hook for fetching and managing analytics data.
+ *
+ * @param {string} apiUrl - The URL to fetch the analytics data from.
+ * @returns {UseAnalyticsDataResult} An object containing the analytics data, loading state, error state, and a function to refresh the data.
+ */
+const useAnalyticsData = (apiUrl: string): UseAnalyticsDataResult => {
+  const [state, setState] = useState<AnalyticsDataState>({
+    data: null,
+    loading: false,
+    error: null,
+  });
+
+  const fetchData = useCallback(async () => {
+    setState((prevState) => ({ ...prevState, loading: true, error: null }));
+
+    try {
+      const response = await fetch(apiUrl);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data: AnalyticsData = await response.json();
+      setState({ data, loading: false, error: null });
+    } catch (error: any) {
+      setState({ data: null, loading: false, error: error.message });
+    }
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const refreshData = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    analyticsData: state.data,
+    loading: state.loading,
+    error: state.error,
+    refreshData,
+  };
+};
+
+export default useAnalyticsData;

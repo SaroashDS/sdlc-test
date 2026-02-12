@@ -1,0 +1,45 @@
+// Loading.module.test.tsx
+import styles from './Loading.module';
+
+describe('Loading.module', () => {
+  it('should export the styles object', () => {
+    expect(styles).toBeDefined();
+  });
+
+  it('should have a loadingContainer property', () => {
+    expect(styles.loadingContainer).toBeDefined();
+    expect(typeof styles.loadingContainer).toBe('string');
+  });
+
+  it('should have a spinner property', () => {
+    expect(styles.spinner).toBeDefined();
+    expect(typeof styles.spinner).toBe('string');
+  });
+
+  it('should have a @keyframes rotate property', () => {
+    expect(styles['@keyframes rotate']).toBeDefined();
+    expect(typeof styles['@keyframes rotate']).toBe('string');
+  });
+
+  it('should have the correct values for the properties', () => {
+    expect(styles.loadingContainer).toBe('loadingContainer');
+    expect(styles.spinner).toBe('spinner');
+    expect(styles['@keyframes rotate']).toBe('rotate');
+  });
+
+  it('should not throw an error when accessing the styles object', () => {
+    expect(() => {
+      styles.loadingContainer;
+      styles.spinner;
+      styles['@keyframes rotate'];
+    }).not.toThrow();
+  });
+
+  it('should be able to import the styles object in another module', () => {
+    // This test is more of a sanity check to ensure that the module can be imported
+    // without errors.  A more comprehensive test would involve importing the styles
+    // in a React component and verifying that the styles are applied correctly.
+    const importedStyles = styles;
+    expect(importedStyles).toBeDefined();
+  });
+});

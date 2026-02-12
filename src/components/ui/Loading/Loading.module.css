@@ -1,0 +1,27 @@
+// This file is a TypeScript module that defines the types for the CSS Modules used in Loading.module.css.
+// It helps to provide type safety and autocompletion when working with CSS Modules in TypeScript.
+
+// Define the interface for the CSS Modules.  Each property corresponds to a CSS class name
+// defined in Loading.module.css.  The value of each property is a string, which represents
+// the generated unique class name for that CSS class.
+interface Styles {
+  loadingContainer: string;
+  spinner: string;
+  '@keyframes rotate': string; // Keyframes are also considered as CSS classes
+}
+
+// Import the actual CSS Modules.  This import statement is necessary for TypeScript to
+// recognize the CSS Modules and generate the correct types.  The `as Styles` assertion
+// tells TypeScript that the imported object conforms to the `Styles` interface.
+//
+// NOTE:  The actual CSS Modules are not included in this file.  This file only defines the types.
+//        The CSS Modules themselves are defined in Loading.module.css.
+const styles: Styles = {
+  loadingContainer: 'loadingContainer', // Replace with actual generated class name if needed
+  spinner: 'spinner', // Replace with actual generated class name if needed
+  '@keyframes rotate': 'rotate', // Replace with actual generated class name if needed
+};
+
+// Export the styles object.  This allows other modules to import the CSS Modules and use
+// them in a type-safe way.
+export default styles;

@@ -1,0 +1,140 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
+import styles from './AppLayout.module.css';
+
+/**
+ * A hypothetical React component that uses the AppLayout.module.css styles.
+ * This component is created for the purpose of testing the CSS module's usage,
+ * as CSS modules themselves cannot be unit-tested directly.
+ */
+const AppLayout = ({
+  headerContent,
+  sidebarContent,
+  mainContent,
+  footerContent,
+}: {
+  headerContent?: React.ReactNode;
+  sidebarContent?: React.ReactNode;
+  mainContent?: React.ReactNode;
+  footerContent?: React.ReactNode;
+}) => {
+  return (
+    <div className={styles.appLayout} data-testid="app-layout-container">
+      <header className={styles.header} data-testid="app-header">
+        {headerContent || <h1>Default Header</h1>}
+      </header>
+      <aside className={styles.sidebar} data-testid="app-sidebar">
+        {sidebarContent || <nav>Default Sidebar</nav>}
+      </aside>
+      <main className={styles.main} data-testid="app-main">
+        {mainContent || <p>Default Main Content</p>}
+      </main>
+      <footer className={styles.footer} data-testid="app-footer">
+        {footerContent || <p>Default Footer</p>}
+      </footer>
+    </div>
+  );
+};
+
+describe('AppLayout Component with CSS Modules', () => {
+  /**
+   * Test Case 1: Snapshot Test
+   * Verifies the overall structure and class names of the component.
+   * This ensures that the CSS module classes are correctly applied and the
+   * component structure hasn't changed unexpectedly.
+   */
+  it('should render correctly and match the snapshot', () => {
+    const { container } = render(<AppLayout />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  /**
+   * Test Case 2: Class Name Application
+   * Checks if each major element in the layout has the corresponding
+   * class name applied from the CSS module.
+   */
+  it('should apply the correct CSS module classes to each layout section', () => {
+    render(<AppLayout />);
+
+    expect(screen.getByTestId('app-layout-container')).toHaveClass(styles.appLayout);
+    expect(screen.getByTestId('app-header')).toHaveClass(styles.header);
+    expect(screen.getByTestId('app-sidebar')).toHaveClass(styles.sidebar);
+    expect(screen.getByTestId('app-main')).toHaveClass(styles.main);
+    expect(screen.getByTestId('app-footer')).toHaveClass(styles.footer);
+  });
+
+  /**
+   * Test Case 3: Default Content Rendering
+   * Ensures that the component renders its default content for each section
+   * when no custom content is provided via props.
+   */
+  it('should render default content in each section when no props are passed', () => {
+    render(<AppLayout />);
+
+    // Using semantic roles where possible
+    expect(screen.getByRole('banner')).toHaveTextContent('Default Header');
+    expect(screen.getByRole('complementary')).toHaveTextContent('Default Sidebar');
+    expect(screen.getByRole('main')).toHaveTextContent('Default Main Content');
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('Default Footer');
+  });
+
+  /**
+   * Test Case 4: Custom Content Rendering (Props Scenario)
+   * Tests the component's ability to render custom content passed in through props,
+   * ensuring it's flexible and correctly places children.
+   */
+  it('should render custom content in each section when passed as props', () => {
+    const customHeader = <div>Custom Header Content</div>;
+    const customSidebar = <ul><li>Nav Item 1</li></ul>;
+    const customMain = <article><h1>Article Title</h1><p>Article body.</p></article>;
+    const customFooter = <span>Custom Footer Text</span>;
+
+    render(
+      <AppLayout
+        headerContent={customHeader}
+        sidebarContent={customSidebar}
+        mainContent={customMain}
+        footerContent={customFooter}
+      />
+    );
+
+    expect(screen.getByTestId('app-header')).toContainHTML('<div>Custom Header Content</div>');
+    expect(screen.getByTestId('app-sidebar')).toContainHTML('<ul><li>Nav Item 1</li></ul>');
+    expect(screen.getByTestId('app-main')).toContainHTML('<h1>Article Title</h1>');
+    expect(screen.getByTestId('app-footer')).toContainHTML('<span>Custom Footer Text</span>');
+  });
+
+  /**
+   * Test Case 5: Accessibility Testing
+   * Uses jest-axe to perform an automated accessibility audit on the rendered
+   * component. This helps catch common accessibility issues like missing roles,
+   * bad color contrast (if detectable), or improper ARIA attributes.
+   */
+  it('should have no accessibility violations', async () => {
+    const { container } = render(
+        <AppLayout
+            headerContent={<h1>App Title</h1>}
+            sidebarContent={<nav aria-label="Main Navigation"><ul><li>Home</li></ul></nav>}
+            mainContent={<h2>Page Content</h2>}
+            footerContent={<p>&copy; 2024</p>}
+        />
+    );
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  /**
+   * Test Case 6: Semantic HTML Structure
+   * Verifies that the component uses appropriate semantic HTML5 elements,
+   * which is crucial for accessibility and SEO.
+   */
+  it('should use semantic HTML elements for layout sections', () => {
+    render(<AppLayout />);
+
+    expect(screen.getByRole('banner')).toBeInTheDocument(); // <header>
+    expect(screen.getByRole('complementary')).toBeInTheDocument(); // <aside>
+    expect(screen.getByRole('main')).toBeInTheDocument(); // <main>
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument(); // <footer>
+  });
+});

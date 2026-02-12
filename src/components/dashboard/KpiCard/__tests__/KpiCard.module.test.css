@@ -1,0 +1,211 @@
+/*
+ * Test suite for the KpiCard component.
+ *
+ * Since the provided file is a CSS module, these tests are written for a hypothetical
+ * React component (`KpiCard.tsx`) that would consume these styles. This approach
+ * is taken because CSS modules themselves do not contain testable logic.
+ *
+ * The tests verify that the component renders correctly based on its props,
+ * applies the appropriate CSS classes for different states (e.g., positive/negative delta),
+ * and is accessible.
+ */
+
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
+
+// Hypothetical component that uses KpiCard.module.css
+// This is assumed to exist at 'src/components/dashboard/KpiCard/KpiCard.tsx'
+// We are testing this component's behavior and its use of the CSS module classes.
+
+// Mock Icon components for testing purposes
+const MockIcon = ({ name }: { name: string }) => <div data-testid="mock-icon">{name}</div>;
+const ArrowUpIcon = () => <svg data-testid="arrow-up-icon" />;
+const ArrowDownIcon = () => <svg data-testid="arrow-down-icon" />;
+
+// The hypothetical KpiCard component implementation
+interface KpiCardProps {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  delta?: number;
+  deltaContext?: string;
+  className?: string;
+}
+
+// We define the component here to make the test file self-contained and runnable.
+// In a real project, this would be in its own file and imported.
+const KpiCard: React.FC<KpiCardProps> = ({
+  title,
+  value,
+  icon,
+  delta,
+  deltaContext,
+  className,
+}) => {
+  // Mocked CSS module behavior
+  const styles = new Proxy({}, { get: (_, prop) => prop }) as any;
+
+  const isPositive = delta !== undefined && delta >= 0;
+  const isNegative = delta !== undefined && delta < 0;
+
+  const deltaClasses = [
+    styles.delta,
+    isPositive && styles.positive,
+    isNegative && styles.negative,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <div className={[styles.card, className].filter(Boolean).join(' ')} data-testid="kpi-card">
+      <div className={styles.header}>
+        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.iconWrapper}>{icon}</div>
+      </div>
+      <div className={styles.content}>
+        <p className={styles.value}>{value}</p>
+      </div>
+      {delta !== undefined && (
+        <div className={styles.footer}>
+          <p className={deltaClasses}>
+            {isPositive && <ArrowUpIcon />}
+            {isNegative && <ArrowDownIcon />}
+            <span>
+              {isPositive && delta > 0 ? '+' : ''}
+              {delta.toFixed(1)}%
+            </span>
+          </p>
+          {deltaContext && <span className={styles.deltaContext}>{deltaContext}</span>}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+// Test Suite
+describe('KpiCard Component', () => {
+  const defaultProps: KpiCardProps = {
+    title: 'Total Revenue',
+    value: '$45,231.89',
+    icon: <MockIcon name="RevenueIcon" />,
+    delta: 12.5,
+    deltaContext: 'vs. last month',
+  };
+
+  // Mocking the CSS module import
+  // This ensures that when the component tries to access `styles.card`, it gets the string 'card'.
+  // This is a standard pattern for testing components with CSS modules.
+  beforeAll(() => {
+    jest.mock('./KpiCard.module.css', () => {
+      return new Proxy({}, {
+        get: function(target, prop) {
+          if (typeof prop === 'string') {
+            return prop;
+          }
+          return Reflect.get(target, prop);
+        },
+      });
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Rendering and Content', () => {
+    it('should render all elements correctly with default props', () => {
+      render(<KpiCard {...defaultProps} />);
+
+      expect(screen.getByText('Total Revenue')).toBeInTheDocument();
+      expect(screen.getByText('$45,231.89')).toBeInTheDocument();
+      expect(screen.getByTestId('mock-icon')).toHaveTextContent('RevenueIcon');
+      expect(screen.getByText(/vs. last month/i)).toBeInTheDocument();
+    });
+
+    it('should render a snapshot correctly', () => {
+      const { container } = render(<KpiCard {...defaultProps} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('should apply custom className to the root element', () => {
+      const customClass = 'my-custom-kpi-card';
+      render(<KpiCard {...defaultProps} className={customClass} />);
+      const cardElement = screen.getByTestId('kpi-card');
+      expect(cardElement).toHaveClass('card', customClass);
+    });
+
+    it('should not render the footer if delta and deltaContext are not provided', () => {
+      const { delta, deltaContext, ...propsWithoutFooter } = defaultProps;
+      render(<KpiCard {...propsWithoutFooter} />);
+
+      expect(screen.queryByText(/vs. last month/i)).not.toBeInTheDocument();
+      expect(screen.queryByTestId('arrow-up-icon')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('arrow-down-icon')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Delta Scenarios', () => {
+    it('should display a positive delta with a plus sign and an up arrow', () => {
+      render(<KpiCard {...defaultProps} delta={12.5} />);
+      const deltaElement = screen.getByText(/\+12.5%/);
+
+      expect(deltaElement).toBeInTheDocument();
+      expect(deltaElement.parentElement).toHaveClass('delta', 'positive');
+      expect(deltaElement.parentElement).not.toHaveClass('negative');
+      expect(screen.getByTestId('arrow-up-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('arrow-down-icon')).not.toBeInTheDocument();
+    });
+
+    it('should display a negative delta with a minus sign and a down arrow', () => {
+      render(<KpiCard {...defaultProps} delta={-2.1} />);
+      const deltaElement = screen.getByText(/-2.1%/);
+
+      expect(deltaElement).toBeInTheDocument();
+      expect(deltaElement.parentElement).toHaveClass('delta', 'negative');
+      expect(deltaElement.parentElement).not.toHaveClass('positive');
+      expect(screen.getByTestId('arrow-down-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('arrow-up-icon')).not.toBeInTheDocument();
+    });
+
+    it('should display a zero delta without a sign and with an up arrow', () => {
+      render(<KpiCard {...defaultProps} delta={0} />);
+      const deltaElement = screen.getByText(/0.0%/);
+
+      expect(deltaElement).toBeInTheDocument();
+      // Zero is considered positive in this implementation
+      expect(deltaElement.parentElement).toHaveClass('delta', 'positive');
+      expect(deltaElement.parentElement).not.toHaveClass('negative');
+      expect(screen.getByTestId('arrow-up-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('arrow-down-icon')).not.toBeInTheDocument();
+    });
+
+    it('should not render deltaContext if it is not provided', () => {
+      render(<KpiCard {...defaultProps} delta={5.0} deltaContext={undefined} />);
+      expect(screen.getByText(/\+5.0%/)).toBeInTheDocument();
+      expect(screen.queryByText(/vs. last month/i)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('should have no accessibility violations with all props', async () => {
+      const { container } = render(<KpiCard {...defaultProps} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations without a footer', async () => {
+      const { delta, deltaContext, ...propsWithoutFooter } = defaultProps;
+      const { container } = render(<KpiCard {...propsWithoutFooter} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations with a negative delta', async () => {
+      const { container } = render(<KpiCard {...defaultProps} delta={-5.5} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+  });
+});

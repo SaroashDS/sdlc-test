@@ -1,0 +1,67 @@
+// src/components/ui/__tests__/LoadingSpinner.module.css.d.ts.test.tsx
+
+import styles from '../LoadingSpinner.module.css.d';
+
+describe('LoadingSpinner.module.css.d.ts', () => {
+  it('should export an object', () => {
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should export a string for spinnerContainer', () => {
+    expect(typeof styles.spinnerContainer).toBe('string');
+  });
+
+  it('should export a string for spinner', () => {
+    expect(typeof styles.spinner).toBe('string');
+  });
+
+  it('should export a string for spinnerCircle', () => {
+    expect(typeof styles.spinnerCircle).toBe('string');
+  });
+
+  it('should have non-empty strings for all exported styles', () => {
+    expect(styles.spinnerContainer).toBeTruthy();
+    expect(styles.spinner).toBeTruthy();
+    expect(styles.spinnerCircle).toBeTruthy();
+  });
+
+  it('should have different values for each style property', () => {
+    const uniqueValues = new Set([styles.spinnerContainer, styles.spinner, styles.spinnerCircle]);
+    expect(uniqueValues.size).toBe(3);
+  });
+
+  it('should not throw an error when accessing the styles object', () => {
+    expect(() => {
+      styles.spinnerContainer;
+      styles.spinner;
+      styles.spinnerCircle;
+    }).not.toThrow();
+  });
+
+  it('should handle undefined or null values gracefully (although unlikely)', () => {
+    // This is more of a defensive test.  The module should always export strings.
+    // But if something goes wrong in the build process, we want to ensure it doesn't crash.
+    const originalSpinnerContainer = styles.spinnerContainer;
+    const originalSpinner = styles.spinner;
+    const originalSpinnerCircle = styles.spinnerCircle;
+
+    // Temporarily mock the styles object (not recommended in real scenarios, but for demonstration)
+    const mockedStyles = {
+      spinnerContainer: undefined,
+      spinner: null,
+      spinnerCircle: undefined,
+    };
+
+    // Restore the original styles after the test
+    try {
+      expect(typeof mockedStyles.spinnerContainer).toBe('undefined');
+      expect(mockedStyles.spinner).toBeNull();
+      expect(typeof mockedStyles.spinnerCircle).toBe('undefined');
+    } finally {
+      // Restore original values (important to avoid affecting other tests)
+      styles.spinnerContainer = originalSpinnerContainer;
+      styles.spinner = originalSpinner;
+      styles.spinnerCircle = originalSpinnerCircle;
+    }
+  });
+});

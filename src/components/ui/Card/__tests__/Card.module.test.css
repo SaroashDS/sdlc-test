@@ -1,0 +1,125 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import styles from './Card.module.css';
+
+// Add the jest-axe matcher
+expect.extend(toHaveNoViolations);
+
+/**
+ * Since we are testing a CSS module, we need a simple component
+ * that uses it. This mock component will serve as the vehicle for our tests.
+ */
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+const Card: React.FC<CardProps> = ({ children, className, ...props }) => {
+  // Combine the module's class with any additional classes passed in
+  const combinedClassName = [styles.card, className].filter(Boolean).join(' ');
+
+  return (
+    <div className={combinedClassName} {...props}>
+      {children}
+    </div>
+  );
+};
+
+
+describe('Card Component (using Card.module.css)', () => {
+
+  // Test 1: Basic Rendering
+  describe('Rendering', () => {
+    it('should render children correctly', () => {
+      render(<Card><div>Hello World</div></Card>);
+      expect(screen.getByText('Hello World')).toBeInTheDocument();
+    });
+
+    it('should render with a custom data-testid', () => {
+      render(<Card data-testid="my-card">Content</Card>);
+      expect(screen.getByTestId('my-card')).toBeInTheDocument();
+    });
+  });
+
+  // Test 2: CSS Class Application
+  describe('Styling and ClassNames', () => {
+    it('should apply the base .card class from the CSS module', () => {
+      const { container } = render(<Card>Styled Card</Card>);
+      // The first child of the container will be our Card div
+      expect(container.firstChild).toHaveClass(styles.card);
+    });
+
+    it('should merge additional classNames with the base .card class', () => {
+      const customClass = 'my-custom-class';
+      const { container } = render(<Card className={customClass}>Merge Classes</Card>);
+      
+      expect(container.firstChild).toHaveClass(styles.card);
+      expect(container.firstChild).toHaveClass(customClass);
+    });
+
+    it('should handle empty or undefined additional classNames gracefully', () => {
+        const { container } = render(<Card className={undefined}>No extra class</Card>);
+        expect(container.firstChild).toHaveClass(styles.card);
+        expect(container.firstChild).not.toHaveClass('undefined');
+    });
+  });
+
+  // Test 3: Props and Attributes
+  describe('Props and Attributes', () => {
+    it('should forward standard HTML attributes to the underlying div element', () => {
+      const id = 'unique-card-id';
+      const role = 'region';
+      render(<Card id={id} role={role}>Card with attributes</Card>);
+      
+      const cardElement = screen.getByRole(role);
+      expect(cardElement).toHaveAttribute('id', id);
+    });
+  });
+
+  // Test 4: Snapshot Testing
+  describe('Snapshot Tests', () => {
+    it('should match the snapshot for a basic card', () => {
+      const { container } = render(<Card>Snapshot Content</Card>);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('should match the snapshot with an additional class', () => {
+      const { container } = render(<Card className="extra-class">Snapshot with class</Card>);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    /**
+     * This test verifies the component's structure when placed inside a container
+     * that would trigger the dark mode styles. While JSDOM doesn't compute styles,
+     * the snapshot ensures the DOM structure is correct for the CSS selectors to apply.
+     */
+    it('should match the snapshot when rendered within a dark theme container', () => {
+      const { container } = render(
+        <div data-theme="dark">
+          <Card>Dark Mode Card</Card>
+        </div>
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  // Test 5: Accessibility Testing
+  describe('Accessibility (a11y)', () => {
+    it('should have no accessibility violations in light mode', async () => {
+      const { container } = render(<Card>Accessible Card</Card>);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have no accessibility violations in a dark mode context', async () => {
+      const { container } = render(
+        <div data-theme="dark">
+          <Card>Accessible Dark Card</Card>
+        </div>
+      );
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+  });
+});

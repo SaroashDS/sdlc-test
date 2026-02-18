@@ -1,0 +1,89 @@
+// DateRangePicker.style.module.test.ts
+
+import styles from './DateRangePicker.style.module';
+
+jest.mock('./DateRangePicker.style.module.css', () => ({
+  dateRangePicker: 'mock-dateRangePicker',
+  dateRangePickerInput: 'mock-dateRangePickerInput',
+  dateRangePickerCalendarContainer: 'mock-dateRangePickerCalendarContainer',
+  dateRangePickerCalendarHeader: 'mock-dateRangePickerCalendarHeader',
+  dateRangePickerNavButton: 'mock-dateRangePickerNavButton',
+  dateRangePickerNavButtonDisabled: 'mock-dateRangePickerNavButtonDisabled',
+  dateRangePickerCalendarGrid: 'mock-dateRangePickerCalendarGrid',
+  dateRangePickerDay: 'mock-dateRangePickerDay',
+  dateRangePickerDaySelected: 'mock-dateRangePickerDaySelected',
+  dateRangePickerDayStart: 'mock-dateRangePickerDayStart',
+  dateRangePickerDayEnd: 'mock-dateRangePickerDayEnd',
+  dateRangePickerDayHovered: 'mock-dateRangePickerDayHovered',
+  dateRangePickerDayDisabled: 'mock-dateRangePickerDayDisabled',
+  dateRangePickerTodayButton: 'mock-dateRangePickerTodayButton',
+  dateRangePickerApplyButton: 'mock-dateRangePickerApplyButton',
+  dateRangePickerClearButton: 'mock-dateRangePickerClearButton',
+  dateRangePickerButtonContainer: 'mock-dateRangePickerButtonContainer',
+}));
+
+describe('DateRangePicker.style.module', () => {
+  it('should import styles correctly when CSS module loads successfully', () => {
+    expect(styles).toBeDefined();
+    expect(styles.dateRangePicker).toBe('mock-dateRangePicker');
+    expect(styles.dateRangePickerInput).toBe('mock-dateRangePickerInput');
+    expect(styles.dateRangePickerCalendarContainer).toBe('mock-dateRangePickerCalendarContainer');
+    expect(styles.dateRangePickerCalendarHeader).toBe('mock-dateRangePickerCalendarHeader');
+    expect(styles.dateRangePickerNavButton).toBe('mock-dateRangePickerNavButton');
+    expect(styles.dateRangePickerNavButtonDisabled).toBe('mock-dateRangePickerNavButtonDisabled');
+    expect(styles.dateRangePickerCalendarGrid).toBe('mock-dateRangePickerCalendarGrid');
+    expect(styles.dateRangePickerDay).toBe('mock-dateRangePickerDay');
+    expect(styles.dateRangePickerDaySelected).toBe('mock-dateRangePickerDaySelected');
+    expect(styles.dateRangePickerDayStart).toBe('mock-dateRangePickerDayStart');
+    expect(styles.dateRangePickerDayEnd).toBe('mock-dateRangePickerDayEnd');
+    expect(styles.dateRangePickerDayHovered).toBe('mock-dateRangePickerDayHovered');
+    expect(styles.dateRangePickerDayDisabled).toBe('mock-dateRangePickerDayDisabled');
+    expect(styles.dateRangePickerTodayButton).toBe('mock-dateRangePickerTodayButton');
+    expect(styles.dateRangePickerApplyButton).toBe('mock-dateRangePickerApplyButton');
+    expect(styles.dateRangePickerClearButton).toBe('mock-dateRangePickerClearButton');
+    expect(styles.dateRangePickerButtonContainer).toBe('mock-dateRangePickerButtonContainer');
+  });
+
+  it('should handle CSS module import failure gracefully', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    jest.resetModules();
+    jest.mock('./DateRangePicker.style.module.css', () => {
+      throw new Error('Failed to load CSS module');
+    });
+
+    const stylesOnError = require('./DateRangePicker.style.module').default;
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to load DateRangePicker.style.module.css",
+      new Error('Failed to load CSS module')
+    );
+
+    expect(stylesOnError).toEqual({
+      dateRangePicker: "",
+      dateRangePickerInput: "",
+      dateRangePickerCalendarContainer: "",
+      dateRangePickerCalendarHeader: "",
+      dateRangePickerNavButton: "",
+      dateRangePickerNavButtonDisabled: "",
+      dateRangePickerCalendarGrid: "",
+      dateRangePickerDay: "",
+      dateRangePickerDaySelected: "",
+      dateRangePickerDayStart: "",
+      dateRangePickerDayEnd: "",
+      dateRangePickerDayHovered: "",
+      dateRangePickerDayDisabled: "",
+      dateRangePickerTodayButton: "",
+      dateRangePickerApplyButton: "",
+      dateRangePickerClearButton: "",
+      dateRangePickerButtonContainer: "",
+    });
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  afterEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+});

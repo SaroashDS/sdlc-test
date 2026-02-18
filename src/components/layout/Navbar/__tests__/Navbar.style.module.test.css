@@ -1,0 +1,84 @@
+// Navbar.style.module.test.ts
+
+import styles from './Navbar.style.module';
+
+jest.mock('./Navbar.style.module.css', () => ({
+  navbar: 'mock-navbar',
+  navbarLogo: 'mock-navbarLogo',
+  navbarLinks: 'mock-navbarLinks',
+  navbarLink: 'mock-navbarLink',
+  navbarLinkActive: 'mock-navbarLinkActive',
+  navbarButton: 'mock-navbarButton',
+  navbarButtonPrimary: 'mock-navbarButtonPrimary',
+  navbarButtonSecondary: 'mock-navbarButtonSecondary',
+  mobileMenuIcon: 'mock-mobileMenuIcon',
+  mobileMenu: 'mock-mobileMenu',
+  mobileMenuOpen: 'mock-mobileMenuOpen',
+  mobileMenuLinks: 'mock-mobileMenuLinks',
+  mobileMenuLink: 'mock-mobileMenuLink',
+  mobileMenuButton: 'mock-mobileMenuButton',
+  mobileMenuButtonPrimary: 'mock-mobileMenuButtonPrimary',
+  mobileMenuButtonSecondary: 'mock-mobileMenuButtonSecondary',
+}));
+
+describe('Navbar.style.module', () => {
+  it('should import styles from the CSS module', () => {
+    expect(styles).toBeDefined();
+    expect(styles.navbar).toBe('mock-navbar');
+    expect(styles.navbarLogo).toBe('mock-navbarLogo');
+    expect(styles.navbarLinks).toBe('mock-navbarLinks');
+    expect(styles.navbarLink).toBe('mock-navbarLink');
+    expect(styles.navbarLinkActive).toBe('mock-navbarLinkActive');
+    expect(styles.navbarButton).toBe('mock-navbarButton');
+    expect(styles.navbarButtonPrimary).toBe('mock-navbarButtonPrimary');
+    expect(styles.navbarButtonSecondary).toBe('mock-navbarButtonSecondary');
+    expect(styles.mobileMenuIcon).toBe('mock-mobileMenuIcon');
+    expect(styles.mobileMenu).toBe('mock-mobileMenu');
+    expect(styles.mobileMenuOpen).toBe('mock-mobileMenuOpen');
+    expect(styles.mobileMenuLinks).toBe('mock-mobileMenuLinks');
+    expect(styles.mobileMenuLink).toBe('mock-mobileMenuLink');
+    expect(styles.mobileMenuButton).toBe('mock-mobileMenuButton');
+    expect(styles.mobileMenuButtonPrimary).toBe('mock-mobileMenuButtonPrimary');
+    expect(styles.mobileMenuButtonSecondary).toBe('mock-mobileMenuButtonSecondary');
+  });
+
+  it('should return an empty styles object if the CSS module fails to load', () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.resetModules(); // Clear the module cache to force a re-import
+    jest.doMock('./Navbar.style.module.css', () => {
+      throw new Error('Failed to load CSS module');
+    });
+
+    const stylesOnError = require('./Navbar.style.module').default;
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      "Failed to load Navbar.style.module.css.  Returning empty styles object.",
+      'Failed to load CSS module'
+    );
+    expect(stylesOnError).toEqual({
+      navbar: '',
+      navbarLogo: '',
+      navbarLinks: '',
+      navbarLink: '',
+      navbarLinkActive: '',
+      navbarButton: '',
+      navbarButtonPrimary: '',
+      navbarButtonSecondary: '',
+      mobileMenuIcon: '',
+      mobileMenu: '',
+      mobileMenuOpen: '',
+      mobileMenuLinks: '',
+      mobileMenuLink: '',
+      mobileMenuButton: '',
+      mobileMenuButtonPrimary: '',
+      mobileMenuButtonSecondary: '',
+    });
+
+    consoleWarnSpy.mockRestore();
+  });
+
+  afterEach(() => {
+    jest.resetModules();
+    jest.restoreAllMocks();
+  });
+});

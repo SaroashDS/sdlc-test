@@ -1,0 +1,87 @@
+// MetricCard.style.module.test.ts
+import styles from './MetricCard.style.module';
+
+jest.mock('./MetricCard.style.module.css', () => ({
+  metricCard: 'mocked-metricCard',
+  metricTitle: 'mocked-metricTitle',
+  metricValue: 'mocked-metricValue',
+  metricDescription: 'mocked-metricDescription',
+  metricIcon: 'mocked-metricIcon',
+}));
+
+describe('MetricCard.style.module', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetModules();
+  });
+
+  it('should export the mocked styles when CSS module loads successfully', () => {
+    expect(styles).toEqual({
+      metricCard: 'mocked-metricCard',
+      metricTitle: 'mocked-metricTitle',
+      metricValue: 'mocked-metricValue',
+      metricDescription: 'mocked-metricDescription',
+      metricIcon: 'mocked-metricIcon',
+    });
+  });
+
+  it('should handle CSS module loading failure and export an empty object', () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {}); // Suppress console.error output
+
+    jest.doMock('./MetricCard.style.module.css', () => {
+      throw new Error('Failed to load CSS module');
+    });
+
+    const stylesAfterError = require('./MetricCard.style.module').default;
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Failed to load MetricCard.style.module.css",
+      new Error('Failed to load CSS module')
+    );
+    expect(stylesAfterError).toEqual({});
+  });
+
+  it('should not throw an error when importing the module after a failed import', () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {}); // Suppress console.error output
+
+    jest.doMock('./MetricCard.style.module.css', () => {
+      throw new Error('Failed to load CSS module');
+    });
+
+    require('./MetricCard.style.module');
+
+    jest.unmock('./MetricCard.style.module.css');
+
+    jest.doMock('./MetricCard.style.module.css', () => ({
+      metricCard: 'mocked-metricCard',
+      metricTitle: 'mocked-metricTitle',
+      metricValue: 'mocked-metricValue',
+      metricDescription: 'mocked-metricDescription',
+      metricIcon: 'mocked-metricIcon',
+    }));
+
+    const stylesAfterRecover = require('./MetricCard.style.module').default;
+
+    expect(stylesAfterRecover).toEqual({
+      metricCard: 'mocked-metricCard',
+      metricTitle: 'mocked-metricTitle',
+      metricValue: 'mocked-metricValue',
+      metricDescription: 'mocked-metricDescription',
+      metricIcon: 'mocked-metricIcon',
+    });
+  });
+
+  it('should handle the case where require returns null', () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {}); // Suppress console.error output
+
+    jest.doMock('./MetricCard.style.module.css', () => null);
+
+    const stylesAfterNull = require('./MetricCard.style.module').default;
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Failed to load MetricCard.style.module.css",
+      null
+    );
+    expect(stylesAfterNull).toEqual({});
+  });
+});

@@ -1,0 +1,40 @@
+// src/components/charts/MainAnalyticsChart/MainAnalyticsChart.style.module.test.tsx
+
+import styles from './MainAnalyticsChart.style.module.css';
+
+describe('MainAnalyticsChart.style.module.css', () => {
+  it('should have the correct class names', () => {
+    expect(styles).toBeDefined();
+    expect(styles.chartContainer).toBeDefined();
+    expect(styles.chartHeader).toBeDefined();
+    expect(styles.chartTitle).toBeDefined();
+    expect(styles.chartSubtitle).toBeDefined();
+    expect(styles.chartLegend).toBeDefined();
+    expect(styles.legendItem).toBeDefined();
+    expect(styles.legendLabel).toBeDefined();
+    expect(styles.legendValue).toBeDefined();
+    expect(styles.chartWrapper).toBeDefined();
+    expect(styles.noDataContainer).toBeDefined();
+    expect(styles.noDataText).toBeDefined();
+  });
+
+  it('should have non-empty class names', () => {
+    expect(styles.chartContainer).not.toBe('');
+    expect(styles.chartHeader).not.toBe('');
+    expect(styles.chartTitle).not.toBe('');
+    expect(styles.chartSubtitle).not.toBe('');
+    expect(styles.chartLegend).not.toBe('');
+    expect(styles.legendItem).not.toBe('');
+    expect(styles.legendLabel).not.toBe('');
+    expect(styles.legendValue).not.toBe('');
+    expect(styles.chartWrapper).not.toBe('');
+    expect(styles.noDataContainer).not.toBe('');
+    expect(styles.noDataText).not.toBe('');
+  });
+
+  it('should have unique class names', () => {
+    const classNames = Object.values(styles);
+    const uniqueClassNames = new Set(classNames);
+    expect(classNames.length).toBe(uniqueClassNames.size);
+  });
+});

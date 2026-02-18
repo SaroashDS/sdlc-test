@@ -1,0 +1,94 @@
+// ExportButton.style.module.test.ts
+
+import styles, { Styles } from './ExportButton.style.module.css';
+
+// Mock the CSS module
+jest.mock('./ExportButton.style.module.css', () => ({
+  exportButton: 'mock-exportButton',
+  exportButtonDisabled: 'mock-exportButtonDisabled',
+  exportButtonIcon: 'mock-exportButtonIcon',
+  exportButtonLabel: 'mock-exportButtonLabel',
+  exportButtonLoading: 'mock-exportButtonLoading',
+}));
+
+describe('ExportButton.style.module', () => {
+  it('should export an object with the correct CSS class names', () => {
+    expect(styles).toBeDefined();
+    expect(typeof styles).toBe('object');
+  });
+
+  it('should have the correct CSS class names', () => {
+    const expectedStyles: Styles = {
+      exportButton: 'mock-exportButton',
+      exportButtonDisabled: 'mock-exportButtonDisabled',
+      exportButtonIcon: 'mock-exportButtonIcon',
+      exportButtonLabel: 'mock-exportButtonLabel',
+      exportButtonLoading: 'mock-exportButtonLoading',
+    };
+
+    expect(styles).toEqual(expectedStyles);
+  });
+
+  it('should have a string value for exportButton', () => {
+    expect(typeof styles.exportButton).toBe('string');
+  });
+
+  it('should have a string value for exportButtonDisabled', () => {
+    expect(typeof styles.exportButtonDisabled).toBe('string');
+  });
+
+  it('should have a string value for exportButtonIcon', () => {
+    expect(typeof styles.exportButtonIcon).toBe('string');
+  });
+
+  it('should have a string value for exportButtonLabel', () => {
+    expect(typeof styles.exportButtonLabel).toBe('string');
+  });
+
+  it('should have a string value for exportButtonLoading', () => {
+    expect(typeof styles.exportButtonLoading).toBe('string');
+  });
+
+  it('should handle undefined values gracefully (although this is unlikely with CSS Modules)', () => {
+    // Simulate a scenario where a CSS class is not defined (though unlikely with CSS Modules)
+    jest.unmock('./ExportButton.style.module.css'); // Unmock to allow re-mocking
+
+    jest.mock('./ExportButton.style.module.css', () => ({
+      exportButton: 'mock-exportButton',
+      exportButtonDisabled: 'mock-exportButtonDisabled',
+      exportButtonIcon: 'mock-exportButtonIcon',
+      exportButtonLabel: 'mock-exportButtonLabel',
+      // exportButtonLoading is intentionally omitted
+    }));
+
+    // Re-import the styles after re-mocking
+    const updatedStyles = require('./ExportButton.style.module.css');
+
+    expect(updatedStyles).toBeDefined();
+    expect(typeof updatedStyles).toBe('object');
+    expect(updatedStyles.exportButton).toBe('mock-exportButton');
+    expect(updatedStyles.exportButtonLoading).toBeUndefined(); // Or null, depending on your setup
+  });
+
+  it('should not throw an error if the CSS module is empty', () => {
+    jest.unmock('./ExportButton.style.module.css');
+    jest.mock('./ExportButton.style.module.css', () => ({}));
+
+    const emptyStyles = require('./ExportButton.style.module.css');
+
+    expect(emptyStyles).toBeDefined();
+    expect(typeof emptyStyles).toBe('object');
+  });
+
+  afterEach(() => {
+    jest.resetModules(); // Reset modules to prevent state from leaking between tests
+    jest.unmock('./ExportButton.style.module.css'); // Unmock after each test to ensure clean state
+    jest.mock('./ExportButton.style.module.css', () => ({
+      exportButton: 'mock-exportButton',
+      exportButtonDisabled: 'mock-exportButtonDisabled',
+      exportButtonIcon: 'mock-exportButtonIcon',
+      exportButtonLabel: 'mock-exportButtonLabel',
+      exportButtonLoading: 'mock-exportButtonLoading',
+    }));
+  });
+});

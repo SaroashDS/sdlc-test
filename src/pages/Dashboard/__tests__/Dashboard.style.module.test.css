@@ -1,0 +1,95 @@
+// Dashboard.style.module.test.ts
+
+import styles from './Dashboard.style.module';
+
+jest.mock('./Dashboard.style.module.css', () => ({
+  dashboardContainer: 'mock-dashboardContainer',
+  dashboardHeader: 'mock-dashboardHeader',
+  dashboardContent: 'mock-dashboardContent',
+  dashboardWidget: 'mock-dashboardWidget',
+  widgetTitle: 'mock-widgetTitle',
+  widgetContent: 'mock-widgetContent',
+  loading: 'mock-loading',
+  error: 'mock-error',
+}));
+
+describe('Dashboard.style.module', () => {
+  it('should import styles correctly when CSS module is available', () => {
+    expect(styles).toBeDefined();
+    expect(styles.dashboardContainer).toBe('mock-dashboardContainer');
+    expect(styles.dashboardHeader).toBe('mock-dashboardHeader');
+    expect(styles.dashboardContent).toBe('mock-dashboardContent');
+    expect(styles.dashboardWidget).toBe('mock-dashboardWidget');
+    expect(styles.widgetTitle).toBe('mock-widgetTitle');
+    expect(styles.widgetContent).toBe('mock-widgetContent');
+    expect(styles.loading).toBe('mock-loading');
+    expect(styles.error).toBe('mock-error');
+  });
+
+  it('should handle the case where the CSS module fails to load', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    jest.resetModules(); // Clear the module cache
+    jest.doMock('./Dashboard.style.module.css', () => {
+      throw new Error('Failed to load CSS module');
+    });
+
+    const dynamicStyles = require('./Dashboard.style.module').default;
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to load Dashboard.style.module.css:",
+      "Failed to load CSS module"
+    );
+
+    expect(dynamicStyles).toEqual({
+      dashboardContainer: '',
+      dashboardHeader: '',
+      dashboardContent: '',
+      dashboardWidget: '',
+      widgetTitle: '',
+      widgetContent: '',
+      loading: '',
+      error: '',
+    });
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should return an object with empty strings when CSS module fails to load', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.resetModules();
+    jest.doMock('./Dashboard.style.module.css', () => {
+      throw new Error('Simulated CSS module load failure');
+    });
+
+    const dynamicStyles = require('./Dashboard.style.module').default;
+
+    expect(dynamicStyles).toEqual({
+      dashboardContainer: '',
+      dashboardHeader: '',
+      dashboardContent: '',
+      dashboardWidget: '',
+      widgetTitle: '',
+      widgetContent: '',
+      loading: '',
+      error: '',
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should log an error to the console when CSS module fails to load', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.resetModules();
+    jest.doMock('./Dashboard.style.module.css', () => {
+      throw new Error('Simulated CSS module load failure');
+    });
+
+    require('./Dashboard.style.module');
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to load Dashboard.style.module.css:",
+      "Simulated CSS module load failure"
+    );
+    consoleErrorSpy.mockRestore();
+  });
+});

@@ -1,0 +1,52 @@
+# AI-Powered SDLC Automation System Dependencies
+
+# Google Cloud & AI
+google-cloud-aiplatform>=1.40.0
+google-cloud-pubsub>=2.20.0
+google-cloud-secret-manager>=2.18.0
+google-cloud-storage>=2.12.0
+google-auth>=2.25.0
+google-genai>=0.2.0
+vertexai>=1.71.1
+
+# Web Framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.6.0
+pydantic-settings>=2.1.0
+httpx>=0.26.0
+
+# Azure DevOps Integration
+azure-devops>=7.1.0b4
+
+# GitHub Integration
+PyGithub>=2.1.0
+cryptography>=46.0.3
+PyJWT>=2.8.0
+
+# Figma Integration
+requests>=2.31.0
+pillow>=10.2.0
+
+# Code Generation & Analysis
+jinja2>=3.1.3
+black>=24.0.0
+isort>=5.13.0
+
+# Testing & Validation
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+coverage>=7.4.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+structlog>=24.0.0
+tenacity>=8.2.0
+aiofiles>=23.2.0
+
+# Development
+pre-commit>=3.6.0
+mypy>=1.8.0
+ruff>=0.2.0
+playwright>=1.40.0

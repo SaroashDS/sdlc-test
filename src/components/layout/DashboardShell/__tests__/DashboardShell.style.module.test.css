@@ -1,0 +1,42 @@
+import styles, { DashboardShellStyleModule } from './DashboardShell.style.module';
+
+describe('DashboardShell.style.module', () => {
+  it('should export an object with the correct keys', () => {
+    expect(styles).toBeDefined();
+    expect(styles).toHaveProperty('container');
+    expect(styles).toHaveProperty('sidebar');
+    expect(styles).toHaveProperty('content');
+    expect(styles).toHaveProperty('header');
+    expect(styles).toHaveProperty('footer');
+  });
+
+  it('should have string values for all keys', () => {
+    Object.values(styles).forEach(value => {
+      expect(typeof value).toBe('string');
+    });
+  });
+
+  it('should have the correct string values', () => {
+    expect(styles.container).toBe('container');
+    expect(styles.sidebar).toBe('sidebar');
+    expect(styles.content).toBe('content');
+    expect(styles.header).toBe('header');
+    expect(styles.footer).toBe('footer');
+  });
+
+  it('should match snapshot', () => {
+    expect(styles).toMatchSnapshot();
+  });
+
+  it('should be an object of type DashboardShellStyleModule', () => {
+    const expectedType: DashboardShellStyleModule = {
+      container: expect.any(String),
+      sidebar: expect.any(String),
+      content: expect.any(String),
+      header: expect.any(String),
+      footer: expect.any(String),
+    };
+
+    expect(styles).toMatchObject(expect.objectContaining(expectedType));
+  });
+});

@@ -1,0 +1,52 @@
+import styles from './Sidebar.style.module';
+
+describe('Sidebar.style.module', () => {
+  it('should export an object with all the expected keys', () => {
+    expect(styles).toBeDefined();
+    expect(styles).toHaveProperty('sidebar');
+    expect(styles).toHaveProperty('sidebarHeader');
+    expect(styles).toHaveProperty('sidebarContent');
+    expect(styles).toHaveProperty('sidebarFooter');
+    expect(styles).toHaveProperty('sidebarNavigation');
+    expect(styles).toHaveProperty('sidebarNavigationItem');
+    expect(styles).toHaveProperty('sidebarNavigationItemActive');
+    expect(styles).toHaveProperty('sidebarNavigationLink');
+    expect(styles).toHaveProperty('sidebarNavigationIcon');
+    expect(styles).toHaveProperty('sidebarNavigationText');
+    expect(styles).toHaveProperty('sidebarCollapsed');
+    expect(styles).toHaveProperty('sidebarToggleButton');
+    expect(styles).toHaveProperty('sidebarToggleButtonIcon');
+  });
+
+  it('should have string values for all keys', () => {
+    for (const key in styles) {
+      if (styles.hasOwnProperty(key)) {
+        expect(typeof styles[key]).toBe('string');
+      }
+    }
+  });
+
+  it('should have non-empty string values for all keys', () => {
+    for (const key in styles) {
+      if (styles.hasOwnProperty(key)) {
+        expect(styles[key]).toBeTruthy();
+      }
+    }
+  });
+
+  it('should have specific class names assigned to each key', () => {
+    expect(styles.sidebar).toBe('sidebar_sidebar__abc12');
+    expect(styles.sidebarHeader).toBe('sidebar_sidebarHeader__abc12');
+    expect(styles.sidebarContent).toBe('sidebar_sidebarContent__abc12');
+    expect(styles.sidebarFooter).toBe('sidebar_sidebarFooter__abc12');
+    expect(styles.sidebarNavigation).toBe('sidebar_sidebarNavigation__abc12');
+    expect(styles.sidebarNavigationItem).toBe('sidebar_sidebarNavigationItem__abc12');
+    expect(styles.sidebarNavigationItemActive).toBe('sidebar_sidebarNavigationItemActive__abc12');
+    expect(styles.sidebarNavigationLink).toBe('sidebar_sidebarNavigationLink__abc12');
+    expect(styles.sidebarNavigationIcon).toBe('sidebar_sidebarNavigationIcon__abc12');
+    expect(styles.sidebarNavigationText).toBe('sidebar_sidebarNavigationText__abc12');
+    expect(styles.sidebarCollapsed).toBe('sidebar_sidebarCollapsed__abc12');
+    expect(styles.sidebarToggleButton).toBe('sidebar_sidebarToggleButton__abc12');
+    expect(styles.sidebarToggleButtonIcon).toBe('sidebar_sidebarToggleButtonIcon__abc12');
+  });
+});

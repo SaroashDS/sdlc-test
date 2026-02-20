@@ -17,14 +17,14 @@ if sys.platform == 'win32':
 
 
 
-from src.config import settings
+from .config import settings
 
-from src.utils.logging import get_logger
-from src.integrations.client_factory import initialize_clients, close_clients
-from src.agents.requirement_gathering_agent import requirement_gathering_agent
-from src.agents.development_agent import development_agent
-from src.agents.testing_debugging_agent import testing_debugging_agent
-from src.agents.deployment_agent import deployment_agent
+from .utils.logging import get_logger
+from .integrations.client_factory import initialize_clients, close_clients
+from .agents.requirement_gathering_agent import requirement_gathering_agent
+from .agents.development_agent import development_agent
+from .agents.testing_debugging_agent import testing_debugging_agent
+from .agents.deployment_agent import deployment_agent
 
 # Initialize logger
 logger = get_logger(__name__)
